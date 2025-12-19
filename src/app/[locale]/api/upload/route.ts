@@ -129,8 +129,7 @@ export const POST = async (request: Request) => {
       key: result.key,
       url: result.url,
     });
-  }
-  catch (error) {
+  } catch (error) {
     logger.error('Failed to upload image', { error });
     return NextResponse.json(
       { error: 'Failed to upload image' },

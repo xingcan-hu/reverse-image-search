@@ -1,10 +1,10 @@
+import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { Env } from './Env';
 import { logger } from './Logger';
 
@@ -68,10 +68,10 @@ const buildKey = (filename?: string, prefix = 'uploads') => {
 };
 
 const getPublicUrl = (key: string, baseUrl?: string) => {
-  const base =
-    baseUrl
-    ?? Env.R2_PUBLIC_BASE_URL
-    ?? 'https://bde2a4fb5276f94ba60cec33fbe6ec38.r2.cloudflarestorage.com/images';
+  const base
+    = baseUrl
+      ?? Env.R2_PUBLIC_BASE_URL
+      ?? 'https://bde2a4fb5276f94ba60cec33fbe6ec38.r2.cloudflarestorage.com/images';
 
   return `${base.replace(/\/$/, '')}/${key}`;
 };
@@ -91,11 +91,15 @@ export const uploadLocalFile = async (
 
   // Detect content type from file extension if not provided
   const contentType = options?.contentType
-    ?? (path.extname(filePath).match(/\.(jpg|jpeg)$/i) ? 'image/jpeg'
-      : path.extname(filePath).match(/\.png$/i) ? 'image/png'
-      : path.extname(filePath).match(/\.gif$/i) ? 'image/gif'
-      : path.extname(filePath).match(/\.webp$/i) ? 'image/webp'
-      : 'application/octet-stream');
+    ?? (path.extname(filePath).match(/\.(jpg|jpeg)$/i)
+      ? 'image/jpeg'
+      : path.extname(filePath).match(/\.png$/i)
+        ? 'image/png'
+        : path.extname(filePath).match(/\.gif$/i)
+          ? 'image/gif'
+          : path.extname(filePath).match(/\.webp$/i)
+            ? 'image/webp'
+            : 'application/octet-stream');
 
   await putObject({
     Bucket: getBucket(),
@@ -122,11 +126,15 @@ export const uploadImageStream = async (
 
   // Detect content type from filename extension if not provided
   const contentType = options?.contentType
-    ?? (options?.filename?.match(/\.(jpg|jpeg)$/i) ? 'image/jpeg'
-      : options?.filename?.match(/\.png$/i) ? 'image/png'
-      : options?.filename?.match(/\.gif$/i) ? 'image/gif'
-      : options?.filename?.match(/\.webp$/i) ? 'image/webp'
-      : 'image/jpeg'); // Default to jpeg for images
+    ?? (options?.filename?.match(/\.(jpg|jpeg)$/i)
+      ? 'image/jpeg'
+      : options?.filename?.match(/\.png$/i)
+        ? 'image/png'
+        : options?.filename?.match(/\.gif$/i)
+          ? 'image/gif'
+          : options?.filename?.match(/\.webp$/i)
+            ? 'image/webp'
+            : 'image/jpeg'); // Default to jpeg for images
 
   await putObject({
     Bucket: getBucket(),

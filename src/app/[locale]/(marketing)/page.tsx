@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
-import { ArrowRight, Check, Globe, Search, Shield, Sparkles, UploadCloud } from 'lucide-react';
+import { ArrowRight, Check, Globe, Search, Shield, Sparkles } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { routing } from '@/libs/I18nRouting';
@@ -28,24 +28,24 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const features = [
   {
-    title: 'Upload, drag & drop, or paste a URL',
-    description: 'Search with a file upload, drag-and-drop, or a public image URL (desktop and mobile).',
-    icon: <UploadCloud className="h-5 w-5 text-indigo-600" />,
+    title: 'Search Across 50+ Sources',
+    description: 'Search Getty Images, Shutterstock, Unsplash, Pexels, and dozens more stock sites simultaneously.',
+    icon: <Globe className="h-5 w-5 text-indigo-600" />,
   },
   {
-    title: 'Find sources and similar photos',
-    description: 'Get matching pages, thumbnails, and sources so you can verify where an image appears online.',
+    title: 'Find Higher Resolution',
+    description: 'Discover larger, higher quality versions of images and alternative crops of the same subject.',
     icon: <Search className="h-5 w-5 text-indigo-600" />,
   },
   {
-    title: 'Fast, credits-based pricing',
-    description: 'New users get 3 free credits. Each search costs 1 credit. No subscriptions.',
-    icon: <Shield className="h-5 w-5 text-indigo-600" />,
+    title: 'Instant Source Identification',
+    description: 'Get thumbnails, titles, and direct links to verify where an image appears online.',
+    icon: <Sparkles className="h-5 w-5 text-indigo-600" />,
   },
   {
-    title: 'One-time checkout via Stripe',
-    description: 'Buy credits when you need them. Credits never expire and failed searches are auto-refunded.',
-    icon: <Sparkles className="h-5 w-5 text-indigo-600" />,
+    title: 'Simple Pay-Per-Use',
+    description: 'No subscriptions. Credits never expire. Failed searches are automatically refunded.',
+    icon: <Shield className="h-5 w-5 text-indigo-600" />,
   },
 ];
 
@@ -105,14 +105,18 @@ export default async function Index(props: IIndexProps) {
             <h1 className="text-4xl leading-tight font-semibold text-slate-900 md:text-5xl">
               Reverse Image Search
             </h1>
-            <p className="text-lg text-slate-600">Find similar images and identify image sources in seconds.</p>
+            <p className="text-lg text-slate-600">
+              Search across 50+ stock sites. Find higher resolution versions. Identify sources instantly.
+            </p>
             <SignedOut>
-              <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3">
-                <p className="text-base font-semibold text-emerald-900">
-                  🎁 Sign up now and get 3 free search credits!
+              <div className="rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-5 py-4">
+                <p className="text-base font-semibold text-slate-900">
+                  <Sparkles className="mb-1 inline h-5 w-5 text-indigo-600" />
+                  {' '}
+                  Get 3 Free Searches - No Credit Card Required
                 </p>
-                <p className="mt-1 text-sm text-emerald-700">
-                  Start searching immediately with your free credits. No credit card required.
+                <p className="mt-2 text-sm text-slate-700">
+                  Try our reverse image search for free. Find similar images, track sources, and discover higher resolution versions across the web.
                 </p>
               </div>
             </SignedOut>
@@ -144,18 +148,22 @@ export default async function Index(props: IIndexProps) {
                 </Link>
               </SignedIn>
             </div>
-            <div className="flex flex-wrap gap-4 text-sm font-semibold text-slate-600">
+            <div className="flex flex-wrap gap-3 text-sm font-semibold text-slate-600">
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                 <Check className="h-4 w-4 text-emerald-500" />
-                1 credit per search
+                50+ Stock Sites
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                 <Check className="h-4 w-4 text-emerald-500" />
-                Source links included
+                Higher Resolution
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                 <Check className="h-4 w-4 text-emerald-500" />
-                Works on mobile & desktop
+                Instant Results
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
+                <Check className="h-4 w-4 text-emerald-500" />
+                Mobile & Desktop
               </span>
             </div>
           </div>
@@ -316,6 +324,43 @@ export default async function Index(props: IIndexProps) {
               <p className="mt-2 text-sm text-slate-600">{item.a}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-16 text-center shadow-lg">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.1),transparent_50%)]" />
+        <div className="relative mx-auto max-w-2xl">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+            <Sparkles className="h-4 w-4" />
+            Trusted by thousands of users
+          </div>
+          <h2 className="text-3xl font-bold text-white md:text-4xl">
+            Ready to Find Your Images?
+          </h2>
+          <p className="mt-4 text-lg text-slate-300">
+            Join thousands of photographers, designers, and content creators using ReverseImage.io to track image usage and find higher quality versions.
+          </p>
+          <SignedOut>
+            <Link
+              href={`${prefix}/sign-up`}
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              Get Started with 3 Free Credits
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+            <p className="mt-4 text-sm text-slate-400">
+              No credit card required · Start searching in seconds
+            </p>
+          </SignedOut>
+          <SignedIn>
+            <Link
+              href={`${prefix}/search`}
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+            >
+              Start Searching Now
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </SignedIn>
         </div>
       </section>
     </div>

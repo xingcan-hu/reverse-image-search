@@ -3,7 +3,7 @@
 import type { FileRejection } from 'react-dropzone';
 import type { ImageSearchResult } from '@/libs/SearchProvider';
 import { useAuth } from '@clerk/nextjs';
-import { ArrowRight, ImageIcon, Loader2, ShieldCheck, UploadCloud } from 'lucide-react';
+import { ArrowRight, ImageIcon, Loader2, ShieldCheck, Sparkles, UploadCloud, Zap } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
@@ -15,6 +15,59 @@ import { routing } from '@/libs/I18nRouting';
 import { cn } from '@/utils/Cn';
 
 type SearchState = 'idle' | 'searching' | 'success' | 'error';
+
+// Demo examples for non-authenticated users
+const DEMO_EXAMPLES = [
+  {
+    id: 'demo-1',
+    title: 'Mountain Landscape',
+    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    description: 'Search across 50+ sources',
+  },
+  {
+    id: 'demo-2',
+    title: 'City Architecture',
+    thumbnail: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400',
+    description: 'Find higher resolution',
+  },
+  {
+    id: 'demo-3',
+    title: 'Nature Photography',
+    thumbnail: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
+    description: 'Identify sources instantly',
+  },
+];
+
+const DEMO_RESULTS: ImageSearchResult[] = [
+  {
+    id: 'result-1',
+    title: 'Similar Image on Getty Images - High Resolution Available',
+    link: 'https://www.gettyimages.com',
+    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300',
+    source: 'Getty Images',
+  },
+  {
+    id: 'result-2',
+    title: 'Mountain Photography Collection - Stock Photo',
+    link: 'https://www.shutterstock.com',
+    thumbnail: 'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=300',
+    source: 'Shutterstock',
+  },
+  {
+    id: 'result-3',
+    title: 'Landscape Photography Portfolio',
+    link: 'https://unsplash.com',
+    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300',
+    source: 'Unsplash',
+  },
+  {
+    id: 'result-4',
+    title: 'Nature Wallpaper 4K - Free Download',
+    link: 'https://www.pexels.com',
+    thumbnail: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300',
+    source: 'Pexels',
+  },
+];
 
 export const SearchClient = () => {
   const [status, setStatus] = useState<SearchState>('idle');
@@ -247,6 +300,169 @@ export const SearchClient = () => {
     return 'Drop an image to begin';
   }, [isSearching, status]);
 
+  const handleDemoClick = useCallback((example: typeof DEMO_EXAMPLES[0]) => {
+    setPreviewUrl(example.thumbnail);
+    setStatus('searching');
+    setResults([]);
+
+    // Simulate search delay
+    setTimeout(() => {
+      setResults(DEMO_RESULTS);
+      setStatus('success');
+      toast.success('Demo search complete', {
+        description: 'Sign up to search your own images and get 3 free credits!',
+      });
+    }, 1500);
+  }, []);
+
+  // For non-authenticated users, show centered hero layout
+  if (!isSignedIn) {
+    return (
+      <>
+        <LowBalanceDialog open={lowBalanceOpen} onClose={() => setLowBalanceOpen(false)} />
+        <div className="space-y-8">
+          {/* Hero CTA */}
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+              <Sparkles className="h-4 w-4" />
+              Get 3 Free Searches · No Credit Card Required
+            </div>
+            <h2 className="mt-6 text-4xl font-bold text-slate-900 md:text-5xl">
+              Find Similar Images Instantly
+            </h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Search across 50+ stock sites. Find higher resolution versions. Identify sources in seconds.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                const signUpUrl = `${apiPrefix}/sign-up`;
+                router.push(signUpUrl);
+              }}
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl"
+            >
+              <Zap className="h-5 w-5" />
+              Start Searching - Free
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Demo Examples */}
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm font-semibold text-slate-500 uppercase">Try a Demo</p>
+              <h3 className="mt-1 text-xl font-semibold text-slate-900">
+                Click an example to see how it works
+              </h3>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {DEMO_EXAMPLES.map(example => (
+                <button
+                  key={example.id}
+                  type="button"
+                  onClick={() => handleDemoClick(example)}
+                  disabled={isSearching}
+                  className="group relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-lg disabled:opacity-60"
+                >
+                  <div className="aspect-[4/3] overflow-hidden bg-slate-100">
+                    <img
+                      src={example.thumbnail}
+                      alt={example.title}
+                      className="h-full w-full object-cover transition group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-4 text-left">
+                    <p className="font-semibold text-slate-900">{example.title}</p>
+                    <p className="mt-1 text-sm text-slate-600">{example.description}</p>
+                    <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-indigo-600">
+                      Try this example
+                      <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Results Section */}
+          {(isSearching || status === 'success') && (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase">Demo Results</p>
+                  <h2 className="text-2xl font-semibold text-slate-900">Visual Matches</h2>
+                </div>
+                <div className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+                  {status === 'success' ? `${results.length} matches found` : 'Searching...'}
+                </div>
+              </div>
+
+              {isSearching && (
+                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="animate-pulse rounded-xl bg-slate-100 py-24" />
+                  ))}
+                </div>
+              )}
+
+              {status === 'success' && results.length > 0 && (
+                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {results.map(result => (
+                    <div key={result.id} className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                      <div className="aspect-[4/3] overflow-hidden bg-slate-100">
+                        {result.thumbnail && (
+                          <img
+                            src={result.thumbnail}
+                            alt={result.title || 'Search match'}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-2 p-3">
+                        <div className="line-clamp-2 text-sm font-semibold text-slate-800">
+                          {result.title || 'Match'}
+                        </div>
+                        {result.source && (
+                          <span className="inline-block rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm">
+                            {result.source}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {status === 'success' && (
+                <div className="mt-6 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-6 text-center">
+                  <p className="text-lg font-semibold text-slate-900">
+                    Ready to search your own images?
+                  </p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Sign up now and get 3 free search credits. No credit card required.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const signUpUrl = `${apiPrefix}/sign-up`;
+                      router.push(signUpUrl);
+                    }}
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl"
+                  >
+                    <Zap className="h-4 w-4" />
+                    Get Started Free
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  // For authenticated users, show the full two-column layout
   return (
     <>
       <LowBalanceDialog open={lowBalanceOpen} onClose={() => setLowBalanceOpen(false)} />
@@ -255,46 +471,16 @@ export const SearchClient = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase">Image search</p>
-              <h1 className="text-2xl font-semibold text-slate-900">Upload · 1 credit per search</h1>
+              <h1 className="text-2xl font-semibold text-slate-900">Upload & Search</h1>
             </div>
-            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-              {isSignedIn
-                ? (
-                    <>
-                      Balance:
-                      {' '}
-                      {credits ?? 0}
-                      {' '}
-                      credits
-                    </>
-                  )
-                : (
-                    'Sign in to start'
-                  )}
+            <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              Balance:
+              {' '}
+              {credits ?? 0}
+              {' '}
+              credits
             </div>
           </div>
-
-          {!isSignedIn && (
-            <div className="mt-6 rounded-2xl border-2 border-amber-200 bg-amber-50 p-6 text-center">
-              <p className="text-lg font-semibold text-amber-900">
-                Sign in to start searching
-              </p>
-              <p className="mt-2 text-sm text-amber-700">
-                Get 3 free search credits when you sign up
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  const signInUrl = `${apiPrefix}/sign-in`;
-                  router.push(signInUrl);
-                }}
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-700 hover:shadow-md"
-              >
-                Sign in to get started
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          )}
 
           <div
             {...(isSignedIn ? getRootProps() : {})}
@@ -328,7 +514,7 @@ export const SearchClient = () => {
               Drag & drop or click to upload JPG, PNG, or WEBP (max 5MB)
             </p>
             <p className="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm">
-              Cost: 1 credit · Refunds on failure
+              1 credit per search · Auto-refunded if failed
             </p>
           </div>
 
@@ -382,13 +568,13 @@ export const SearchClient = () => {
             </div>
           )}
 
-          <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
             <div className="flex items-center gap-2 font-semibold text-slate-800">
               <ShieldCheck className="h-4 w-4 text-emerald-500" />
-              Credits-first billing · Powered by Stripe
+              Secure & Fast Search
             </div>
-            <div className="text-xs text-slate-500">
-              We check your balance before calling the search engine. Failed searches are auto-refunded.
+            <div className="text-xs text-slate-600">
+              Search across 50+ stock sites including Getty, Shutterstock, Unsplash, and more. Find higher resolution versions and track image usage across the web.
             </div>
           </div>
 
