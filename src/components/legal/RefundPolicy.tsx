@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AlertTriangle, CheckCircle, FileText, Mail, RefreshCw, XCircle } from 'lucide-react';
 import { Fragment } from 'react';
 
 type RefundPolicyProps = {
@@ -10,9 +11,11 @@ export const RefundPolicy = ({
   supportEmail = 'help@support.reverseimage.io',
   refundWindowDays = 14,
 }: RefundPolicyProps) => {
-  const sections: Array<{ title: string; body: Array<{ key: string; content: ReactNode }> }> = [
+  const sections: Array<{ title: string; icon: typeof FileText; color: string; body: Array<{ key: string; content: ReactNode }> }> = [
     {
       title: 'General policy',
+      icon: FileText,
+      color: 'indigo',
       body: [
         {
           key: 'non-refundable-credits',
@@ -26,6 +29,8 @@ export const RefundPolicy = ({
     },
     {
       title: 'Exceptions & eligibility',
+      icon: CheckCircle,
+      color: 'emerald',
       body: [
         {
           key: 'unused-full-refund',
@@ -43,6 +48,8 @@ export const RefundPolicy = ({
     },
     {
       title: 'Non-refundable scenarios',
+      icon: XCircle,
+      color: 'red',
       body: [
         {
           key: 'unsatisfactory-results',
@@ -60,6 +67,8 @@ export const RefundPolicy = ({
     },
     {
       title: 'Refund process',
+      icon: RefreshCw,
+      color: 'purple',
       body: [
         {
           key: 'contact-email',
@@ -86,6 +95,8 @@ export const RefundPolicy = ({
     },
     {
       title: 'Legal & compliance notes',
+      icon: AlertTriangle,
+      color: 'amber',
       body: [
         {
           key: 'currency',
@@ -99,18 +110,66 @@ export const RefundPolicy = ({
     },
   ] as const;
 
+  const getColorClasses = (color: string) => {
+    const colors = {
+      indigo: 'from-indigo-100 to-indigo-50 text-indigo-600',
+      emerald: 'from-emerald-100 to-emerald-50 text-emerald-600',
+      red: 'from-red-100 to-red-50 text-red-600',
+      purple: 'from-purple-100 to-purple-50 text-purple-600',
+      amber: 'from-amber-100 to-amber-50 text-amber-600',
+    };
+    return colors[color as keyof typeof colors] || colors.indigo;
+  };
+
   return (
-    <div className="space-y-3">
-      {sections.map(section => (
-        <div key={section.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-base font-semibold text-slate-900">{section.title}</h3>
-          <div className="mt-2 space-y-2 text-sm text-slate-600">
-            {section.body.map(paragraph => (
-              <p key={paragraph.key}>{paragraph.content}</p>
-            ))}
+    <div className="space-y-4 sm:space-y-6">
+      {sections.map((section) => {
+        const Icon = section.icon;
+        return (
+          <div
+            key={section.title}
+            className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 sm:rounded-3xl sm:p-6"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br sm:h-12 sm:w-12 sm:rounded-xl ${getColorClasses(section.color)}`}>
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">{section.title}</h3>
+                <div className="mt-2 space-y-2 text-xs leading-relaxed text-slate-600 sm:mt-3 sm:space-y-3 sm:text-sm">
+                  {section.body.map(paragraph => (
+                    <p key={paragraph.key} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                      <span className="flex-1">{paragraph.content}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Contact Section */}
+      <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-5 shadow-sm sm:rounded-3xl sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 sm:h-12 sm:w-12 sm:rounded-xl">
+            <Mail className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-base font-bold text-slate-900 sm:text-lg">Need help with a refund?</h4>
+            <p className="mt-1.5 text-xs text-slate-600 sm:mt-2 sm:text-sm">
+              Contact us at
+              {' '}
+              <a className="font-semibold text-indigo-600 hover:underline active:underline" href={`mailto:${supportEmail}`}>
+                {supportEmail}
+              </a>
+              {' '}
+              with your transaction details and we'll respond within 3-5 business days.
+            </p>
           </div>
         </div>
-      ))}
+      </div>
     </div>
   );
 };

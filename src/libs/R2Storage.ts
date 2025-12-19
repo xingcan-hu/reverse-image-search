@@ -35,7 +35,7 @@ const getEndpoint = () => {
 };
 
 const getBucket = () => {
-  return Env.R2_BUCKET ?? 'images';
+  return Env.R2_BUCKET_NAME ?? 'images';
 };
 
 // Keep a single client instance to avoid extra sockets during hot reload

@@ -2,7 +2,7 @@
 
 import type { CreditPackage } from '@/libs/Billing';
 import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
-import { Check, Crown, Zap } from 'lucide-react';
+import { ArrowRight, Check, Crown, Gift, Loader2, Shield, Sparkles, Zap } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -67,133 +67,222 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase">Pricing</p>
-            <h1 className="text-3xl font-semibold text-slate-900">One-time credits, lifetime access</h1>
-            <p className="text-sm text-slate-600">No subscriptions. Buy credits when you need them. Failed searches are auto-refunded.</p>
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 p-6 shadow-lg sm:rounded-3xl sm:p-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.15),transparent_50%)]" />
+        <div className="relative">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm sm:mb-4 sm:px-4 sm:py-2 sm:text-sm">
+            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            Simple Pricing
           </div>
-          <div className="rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700">
-            <SignedIn>
-              Current balance:
+          <h1 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+            Pay Once, Use Forever
+          </h1>
+          <p className="mt-2 text-base text-slate-300 sm:mt-3 sm:text-lg">
+            No subscriptions. No hidden fees. Buy credits when you need them.
+          </p>
+          <SignedIn>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg sm:mt-6 sm:px-5 sm:py-3 sm:text-base">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
+              Your Balance:
               {' '}
               {credits ?? 0}
               {' '}
-              credits
-            </SignedIn>
-            <SignedOut>
-              Sign in to see your balance
-            </SignedOut>
-          </div>
+              Credits
+            </div>
+          </SignedIn>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Pricing Cards */}
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {packages.map(pkg => (
           <div
             key={pkg.id}
             className={cn(
-              'flex flex-col justify-between rounded-3xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md',
+              'relative flex flex-col justify-between overflow-hidden rounded-2xl border p-6 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl sm:p-8',
               pkg.highlight
-                ? 'border-amber-300 bg-amber-50'
+                ? 'border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50'
                 : 'border-slate-200 bg-white',
             )}
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-semibold text-slate-500 uppercase">One-time</p>
-                <h3 className="mt-1 text-2xl font-semibold text-slate-900">{pkg.label}</h3>
-                <p className="text-sm text-slate-600">
+            {pkg.highlight && (
+              <div className="absolute top-0 right-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 opacity-20 blur-2xl" />
+            )}
+            <div className="relative">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold tracking-wider text-indigo-600 uppercase">One-Time Payment</p>
+                  <h3 className="mt-1 text-2xl font-bold text-slate-900 sm:mt-2 sm:text-3xl">{pkg.label}</h3>
+                </div>
+                {pkg.highlight && (
+                  <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg sm:gap-2 sm:px-4 sm:py-2">
+                    <Crown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    Best Value
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 flex flex-wrap items-baseline gap-2 sm:mt-6">
+                <p className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
+                  $
+                  {(pkg.price / 100).toFixed(0)}
+                </p>
+                <div className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 sm:px-3 sm:text-sm">
                   {pkg.credits.toLocaleString()}
                   {' '}
-                  credits · never expire
-                </p>
-              </div>
-              {pkg.highlight && (
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
-                  <Crown className="h-4 w-4" />
-                  Best value
+                  credits
                 </div>
-              )}
+              </div>
+              <p className="mt-2 text-xs text-slate-600 sm:text-sm">
+                Only $
+                {(pkg.price / pkg.credits / 100).toFixed(3)}
+                {' '}
+                per credit · Never expires
+              </p>
             </div>
-            <p className="mt-4 text-4xl font-bold text-slate-900">
-              $
-              {(pkg.price / 100).toFixed(0)}
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-700">
-              <li className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Credits never expire
-              </li>
-              <li className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Instant Stripe checkout
-              </li>
-              <li className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                1 credit per search
-              </li>
-            </ul>
+
+            <div className="relative mt-6 space-y-3">
+              <div className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100">
+                  <Check className="h-4 w-4 text-emerald-600" />
+                </div>
+                <span className="text-sm font-medium text-slate-700">Credits never expire</span>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100">
+                  <Shield className="h-4 w-4 text-indigo-600" />
+                </div>
+                <span className="text-sm font-medium text-slate-700">Secure Stripe checkout</span>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-100">
+                  <Sparkles className="h-4 w-4 text-purple-600" />
+                </div>
+                <span className="text-sm font-medium text-slate-700">Auto-refund on failures</span>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={() => handleCheckout(pkg.id)}
               disabled={loadingId === pkg.id}
               className={cn(
-                'mt-6 inline-flex items-center justify-center rounded-full px-4 py-3 text-sm font-semibold shadow-sm transition',
+                'relative mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold shadow-lg transition sm:mt-6 sm:px-6 sm:py-4 sm:text-base',
                 pkg.highlight
-                  ? 'bg-slate-900 text-white hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md'
-                  : 'border border-slate-200 bg-white text-slate-800 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md',
+                  ? 'bg-gradient-to-r from-slate-900 to-slate-700 text-white hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0'
+                  : 'border-2 border-slate-300 bg-white text-slate-800 hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-xl active:translate-y-0',
                 loadingId === pkg.id && 'cursor-not-allowed opacity-60',
               )}
             >
-              {loadingId === pkg.id ? 'Redirecting to Stripe...' : 'Buy now'}
+              {loadingId === pkg.id
+                ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
+                      Processing...
+                    </>
+                  )
+                : (
+                    <>
+                      Buy Now
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                    </>
+                  )}
             </button>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-3">
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
-          <Zap className="h-5 w-5 text-amber-500" />
-          <span>Automatic refunds if a search fails. Your credits stay safe.</span>
+      {/* Features Grid */}
+      <div className="grid gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm sm:gap-6 sm:rounded-3xl sm:p-8 md:grid-cols-3">
+        <div className="flex flex-col items-center gap-2 text-center sm:gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 sm:h-14 sm:w-14 sm:rounded-2xl">
+            <Zap className="h-6 w-6 text-amber-600 sm:h-7 sm:w-7" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-900 sm:text-base">Auto-Refund</p>
+            <p className="mt-0.5 text-xs text-slate-600 sm:mt-1 sm:text-sm">Failed searches automatically refund your credits</p>
+          </div>
         </div>
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
-          <Check className="h-5 w-5 text-emerald-500" />
-          <span>No subscriptions. Pay once and use anytime.</span>
+        <div className="flex flex-col items-center gap-2 text-center sm:gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 sm:h-14 sm:w-14 sm:rounded-2xl">
+            <Shield className="h-6 w-6 text-emerald-600 sm:h-7 sm:w-7" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-900 sm:text-base">No Subscriptions</p>
+            <p className="mt-0.5 text-xs text-slate-600 sm:mt-1 sm:text-sm">Pay once and use your credits anytime</p>
+          </div>
         </div>
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
-          <Crown className="h-5 w-5 text-amber-500" />
-          <span>High-speed visual matches with clear confidence scores.</span>
+        <div className="flex flex-col items-center gap-2 text-center sm:gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 sm:h-14 sm:w-14 sm:rounded-2xl">
+            <Sparkles className="h-6 w-6 text-indigo-600 sm:h-7 sm:w-7" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-900 sm:text-base">Instant Results</p>
+            <p className="mt-0.5 text-xs text-slate-600 sm:mt-1 sm:text-sm">Search 50+ sources with high accuracy</p>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold text-slate-500 uppercase">Refunds</p>
-        <h2 className="mt-2 text-xl font-semibold text-slate-900">Refund policy summary</h2>
-        <ul className="mt-3 space-y-2 text-sm text-slate-700">
-          <li>Credits are digital goods and are generally non-refundable once used.</li>
-          <li>Unused credit packs may be eligible for a full refund within 14 days.</li>
-          <li>Technical failures or duplicate charges are eligible for correction or refund.</li>
-        </ul>
-        <Link href={refundsHref} className="mt-4 inline-flex text-sm font-semibold text-indigo-600 hover:underline">
-          Read the full refund policy
-        </Link>
+      {/* Refund Policy Summary */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 sm:h-12 sm:w-12 sm:rounded-xl">
+            <Shield className="h-5 w-5 text-indigo-600 sm:h-6 sm:w-6" />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-semibold tracking-wider text-indigo-600 uppercase">Fair Refund Policy</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">Your Purchase is Protected</h2>
+            <div className="mt-3 space-y-2 text-xs text-slate-700 sm:mt-4 sm:space-y-3 sm:text-sm">
+              <div className="flex items-start gap-2">
+                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500 sm:h-4 sm:w-4" />
+                <span>Unused credit packs eligible for full refund within 14 days</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500 sm:h-4 sm:w-4" />
+                <span>Technical failures automatically refunded to your account</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500 sm:h-4 sm:w-4" />
+                <span>Duplicate charges corrected or refunded immediately</span>
+              </div>
+            </div>
+            <Link
+              href={refundsHref}
+              className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 transition-all hover:gap-3 hover:underline active:gap-2 sm:mt-4 sm:text-sm"
+            >
+              Read full refund policy
+              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </Link>
+          </div>
+        </div>
       </div>
 
+      {/* CTA for non-signed-in users */}
       <SignedOut>
-        <div className="rounded-3xl border border-slate-200 bg-slate-900 px-6 py-8 text-white shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative overflow-hidden rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 shadow-lg sm:rounded-3xl sm:p-8">
+          <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-gradient-to-br from-indigo-300 to-purple-400 opacity-20 blur-3xl" />
+          <div className="relative flex flex-col items-center gap-4 text-center sm:gap-6">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+              <Gift className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              Free Trial
+            </div>
             <div>
-              <p className="text-xs font-semibold text-amber-300 uppercase">Start free</p>
-              <h3 className="text-2xl font-semibold">Sign up and get 3 credits on us</h3>
-              <p className="text-sm text-slate-200">Test the search quality before you pay. Credits never expire.</p>
+              <h3 className="text-2xl font-bold text-slate-900 sm:text-3xl">Try Before You Buy</h3>
+              <p className="mt-2 text-base text-slate-700 sm:text-lg">
+                Sign up now and get
+                {' '}
+                <span className="font-bold text-indigo-600">3 free search credits</span>
+                {' '}
+                to test the quality
+              </p>
+              <p className="mt-2 text-xs text-slate-600 sm:text-sm">No credit card required · Credits never expire</p>
             </div>
             <Link
               href={`${localePrefix}/sign-up`}
-              className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-6 py-3.5 text-sm font-bold text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl active:translate-y-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
             >
-              Create account
+              Get Started Free
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
           </div>
         </div>
