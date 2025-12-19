@@ -15,7 +15,7 @@ export const SiteNavbar = () => {
   const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
 
   const navLinks = [
-    { href: `${localePrefix}/search`, label: 'Search' },
+    { href: `${localePrefix || '/'}`, label: 'Home' },
     { href: `${localePrefix}/pricing`, label: 'Pricing' },
     { href: `${localePrefix}/account`, label: 'Account', protected: true },
   ];
@@ -49,7 +49,7 @@ export const SiteNavbar = () => {
           <SignedIn>
             <CreditsBadge className="hidden md:flex" />
             <Link
-              href={`${localePrefix}/search`}
+              href={`${localePrefix || '/'}`}
               className="hidden rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md md:inline-flex"
             >
               New search
@@ -115,7 +115,7 @@ export const SiteNavbar = () => {
           <SignedIn>
             <CreditsBadge className="w-full justify-between" />
             <Link
-              href={`${localePrefix}/search`}
+              href={`${localePrefix || '/'}`}
               className="flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-white shadow-sm"
               onClick={() => setOpen(false)}
             >

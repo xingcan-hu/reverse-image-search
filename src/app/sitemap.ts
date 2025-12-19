@@ -7,13 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${getBaseUrl()}/`,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 0.7,
-    },
-    {
-      url: `${getBaseUrl()}/search`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.6,
+      priority: 1.0,
     },
     {
       url: `${getBaseUrl()}/pricing`,

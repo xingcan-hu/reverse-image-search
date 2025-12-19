@@ -4,6 +4,7 @@ import { ArrowRight, Check, Globe, Search, Shield, Sparkles, UploadCloud } from 
 import { setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { routing } from '@/libs/I18nRouting';
+import { SearchClient } from './search/SearchClient';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -89,9 +90,14 @@ export default async function Index(props: IIndexProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
+      {/* Search Tool - Main Entry Point */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <SearchClient />
+      </section>
+
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-12 shadow-sm sm:px-10 md:px-14">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-amber-50" />
-        <div className="relative grid gap-8 md:grid-cols-2 md:items-center">
+        <div className="relative max-w-3xl">
           <div className="space-y-6">
             <p className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase">
               ReverseImage.io
@@ -100,6 +106,16 @@ export default async function Index(props: IIndexProps) {
               Reverse Image Search
             </h1>
             <p className="text-lg text-slate-600">Find similar images and identify image sources in seconds.</p>
+            <SignedOut>
+              <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3">
+                <p className="text-base font-semibold text-emerald-900">
+                  🎁 Sign up now and get 3 free search credits!
+                </p>
+                <p className="mt-1 text-sm text-emerald-700">
+                  Start searching immediately with your free credits. No credit card required.
+                </p>
+              </div>
+            </SignedOut>
             <p className="text-sm leading-relaxed text-slate-600">
               Upload a photo, drag-and-drop a file, or paste a public image URL. We search the web for visually similar matches, surface thumbnails and source links, and help you track where images appear online.
             </p>
@@ -121,13 +137,6 @@ export default async function Index(props: IIndexProps) {
               </SignedOut>
               <SignedIn>
                 <Link
-                  href={`${prefix}/search`}
-                  className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
-                >
-                  Search by image
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
                   href={`${prefix}/account`}
                   className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                 >
@@ -148,38 +157,6 @@ export default async function Index(props: IIndexProps) {
                 <Check className="h-4 w-4 text-emerald-500" />
                 Works on mobile & desktop
               </span>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute -top-6 -left-10 h-28 w-28 rounded-full bg-indigo-100 blur-3xl" />
-            <div className="absolute -right-10 -bottom-8 h-28 w-28 rounded-full bg-amber-100 blur-3xl" />
-            <div className="relative rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-lg backdrop-blur">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase">Preview</p>
-                  <p className="text-lg font-semibold text-slate-900">Visual matches</p>
-                </div>
-                <div className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
-                  1 credit
-                </div>
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map(item => (
-                  <div
-                    key={item}
-                    className="aspect-square overflow-hidden rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm"
-                  >
-                    <div className="flex h-full items-center justify-center text-slate-400">
-                      Result
-                      {' '}
-                      {item}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-inner">
-                Drag & drop an image to begin · Try free with 3 credits
-              </div>
             </div>
           </div>
         </div>
@@ -289,13 +266,15 @@ export default async function Index(props: IIndexProps) {
               View pricing
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              href={`${prefix}/search`}
-              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
-            >
-              Start a search
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <SignedOut>
+              <Link
+                href={`${prefix}/sign-up`}
+                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
+              >
+                Get started
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </SignedOut>
           </div>
         </div>
       </section>

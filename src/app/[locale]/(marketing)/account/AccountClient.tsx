@@ -86,7 +86,7 @@ export const AccountClient = () => {
               Buy more credits
             </Link>
             <Link
-              href={`${localePrefix}/search`}
+              href={`${localePrefix || '/'}`}
               className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-sm"
             >
               New search

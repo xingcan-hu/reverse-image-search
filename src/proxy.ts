@@ -8,10 +8,8 @@ import { routing } from './libs/I18nRouting';
 const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  '/search(.*)',
   '/account(.*)',
   '/dashboard(.*)',
-  '/:locale/search(.*)',
   '/:locale/account(.*)',
   '/:locale/dashboard(.*)',
 ]);
@@ -45,8 +43,8 @@ const proxy = clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     // Check if pathname starts with a valid locale
     const pathname = req.nextUrl.pathname;
-    const pathLocale = routing.locales.find((locale) => 
-      pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+    const pathLocale = routing.locales.find(locale =>
+      pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
     );
     const locale = pathLocale || routing.defaultLocale;
     const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;

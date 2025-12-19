@@ -2,8 +2,10 @@
 
 import type { FileRejection } from 'react-dropzone';
 import type { ImageSearchResult } from '@/libs/SearchProvider';
-import { ImageIcon, Loader2, ShieldCheck, UploadCloud } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
+import { ArrowRight, ImageIcon, Loader2, ShieldCheck, UploadCloud } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
@@ -22,10 +24,26 @@ export const SearchClient = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lowBalanceOpen, setLowBalanceOpen] = useState(false);
   const locale = useLocale();
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
   const apiPrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
   const { credits, setCredits, refreshCredits } = useCredits();
 
+  const checkAuthAndRedirect = useCallback(() => {
+    if (!isSignedIn) {
+      const signInUrl = `${apiPrefix}/sign-in`;
+      toast.info('Please sign in', { description: 'Sign in to start searching by image.' });
+      router.push(signInUrl);
+      return false;
+    }
+    return true;
+  }, [isSignedIn, apiPrefix, router]);
+
   const handleSearch = useCallback(async (file: File) => {
+    if (!checkAuthAndRedirect()) {
+      return;
+    }
+
     setStatus('searching');
     setErrorMessage(null);
     setResults([]);
@@ -38,6 +56,14 @@ export const SearchClient = () => {
         method: 'POST',
         body: formData,
       });
+
+      if (response.status === 401) {
+        toast.info('Please sign in', { description: 'Sign in to start searching by image.' });
+        const signInUrl = `${apiPrefix}/sign-in`;
+        router.push(signInUrl);
+        setStatus('idle');
+        return;
+      }
 
       if (response.status === 402) {
         setLowBalanceOpen(true);
@@ -73,9 +99,13 @@ export const SearchClient = () => {
       toast.error('Search failed', { description: 'Please upload again.' });
       await refreshCredits();
     }
-  }, [apiPrefix, refreshCredits, setCredits]);
+  }, [apiPrefix, refreshCredits, setCredits, checkAuthAndRedirect, router]);
 
   const handleSearchUrl = useCallback(async () => {
+    if (!checkAuthAndRedirect()) {
+      return;
+    }
+
     const raw = imageUrlInput.trim();
 
     if (!raw) {
@@ -107,6 +137,14 @@ export const SearchClient = () => {
         },
         body: JSON.stringify({ imageUrl: raw }),
       });
+
+      if (response.status === 401) {
+        toast.info('Please sign in', { description: 'Sign in to start searching by image.' });
+        const signInUrl = `${apiPrefix}/sign-in`;
+        router.push(signInUrl);
+        setStatus('idle');
+        return;
+      }
 
       if (response.status === 402) {
         setLowBalanceOpen(true);
@@ -142,10 +180,17 @@ export const SearchClient = () => {
       toast.error('Search failed', { description: 'Please try again.' });
       await refreshCredits();
     }
-  }, [apiPrefix, imageUrlInput, refreshCredits, setCredits]);
+  }, [apiPrefix, imageUrlInput, refreshCredits, setCredits, checkAuthAndRedirect, router]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      if (!isSignedIn) {
+        toast.info('Please sign in', { description: 'Sign in to start searching by image and get 3 free credits.' });
+        const signInUrl = `${apiPrefix}/sign-in`;
+        router.push(signInUrl);
+        return;
+      }
+
       const file = acceptedFiles.at(0);
       if (!file) {
         return;
@@ -153,7 +198,7 @@ export const SearchClient = () => {
       setPreviewUrl(URL.createObjectURL(file));
       void handleSearch(file);
     },
-    [handleSearch],
+    [isSignedIn, apiPrefix, router, handleSearch],
   );
 
   const onDropRejected = useCallback((rejections: FileRejection[]) => {
@@ -166,6 +211,14 @@ export const SearchClient = () => {
     });
   }, []);
 
+  const handleDropzoneClick = useCallback(() => {
+    if (!isSignedIn) {
+      toast.info('Please sign in', { description: 'Sign in to start searching by image and get 3 free credits.' });
+      const signInUrl = `${apiPrefix}/sign-in`;
+      router.push(signInUrl);
+    }
+  }, [isSignedIn, apiPrefix, router]);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     onDropRejected,
@@ -176,6 +229,7 @@ export const SearchClient = () => {
       'image/png': ['.png'],
       'image/webp': ['.webp'],
     },
+    noClick: !isSignedIn,
   });
 
   const isSearching = status === 'searching';
@@ -204,24 +258,66 @@ export const SearchClient = () => {
               <h1 className="text-2xl font-semibold text-slate-900">Upload · 1 credit per search</h1>
             </div>
             <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-              Balance:
-              {' '}
-              {credits ?? 0}
-              {' '}
-              credits
+              {isSignedIn
+                ? (
+                    <>
+                      Balance:
+                      {' '}
+                      {credits ?? 0}
+                      {' '}
+                      credits
+                    </>
+                  )
+                : (
+                    'Sign in to start'
+                  )}
             </div>
           </div>
 
+          {!isSignedIn && (
+            <div className="mt-6 rounded-2xl border-2 border-amber-200 bg-amber-50 p-6 text-center">
+              <p className="text-lg font-semibold text-amber-900">
+                Sign in to start searching
+              </p>
+              <p className="mt-2 text-sm text-amber-700">
+                Get 3 free search credits when you sign up
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  const signInUrl = `${apiPrefix}/sign-in`;
+                  router.push(signInUrl);
+                }}
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-700 hover:shadow-md"
+              >
+                Sign in to get started
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
           <div
-            {...getRootProps()}
+            {...(isSignedIn ? getRootProps() : {})}
+            onClick={!isSignedIn ? handleDropzoneClick : undefined}
+            onKeyDown={!isSignedIn
+              ? (e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleDropzoneClick();
+                  }
+                }
+              : undefined}
+            role={!isSignedIn ? 'button' : undefined}
+            tabIndex={!isSignedIn ? 0 : undefined}
             className={cn(
               'mt-6 flex h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition',
+              !isSignedIn && 'cursor-pointer opacity-60',
               isDragActive
                 ? 'border-indigo-400 bg-indigo-50'
                 : 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100',
             )}
           >
-            <input {...getInputProps()} />
+            {isSignedIn && <input {...getInputProps()} />}
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
               {isSearching ? <Loader2 className="h-6 w-6 animate-spin text-indigo-600" /> : <UploadCloud className="h-6 w-6 text-indigo-600" />}
             </div>
@@ -245,16 +341,24 @@ export const SearchClient = () => {
                 placeholder="https://example.com/image.jpg"
                 inputMode="url"
                 autoComplete="off"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
-                disabled={isSearching}
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition outline-none focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+                disabled={isSearching || !isSignedIn}
               />
               <button
                 type="button"
-                onClick={() => void handleSearchUrl()}
+                onClick={() => {
+                  if (!isSignedIn) {
+                    toast.info('Please sign in', { description: 'Sign in to start searching by image and get 3 free credits.' });
+                    const signInUrl = `${apiPrefix}/sign-in`;
+                    router.push(signInUrl);
+                    return;
+                  }
+                  void handleSearchUrl();
+                }}
                 disabled={isSearching || !imageUrlInput.trim()}
                 className={cn(
                   'inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md',
-                  (isSearching || !imageUrlInput.trim()) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm',
+                  (isSearching || !imageUrlInput.trim() || !isSignedIn) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm',
                 )}
               >
                 Search URL
@@ -368,7 +472,7 @@ export const SearchClient = () => {
                             href={result.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="block break-all text-xs font-semibold text-indigo-600 hover:underline"
+                            className="block text-xs font-semibold break-all text-indigo-600 hover:underline"
                           >
                             {result.link}
                           </a>
