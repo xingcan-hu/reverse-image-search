@@ -18,32 +18,32 @@ test.describe('Sanity', () => {
       await page.goto(`${baseURL}/`);
 
       await expect(
-        page.getByRole('heading', { name: 'Boilerplate Code for Your Next.js Project with Tailwind CSS' }),
+        page.getByRole('heading', { name: 'Upload an image. Find where it lives.' }),
       ).toBeVisible();
     });
 
-    test('should navigate to the about page', async ({ page, baseURL }) => {
+    test('should navigate to the pricing page', async ({ page, baseURL }) => {
       await page.goto(`${baseURL}/`);
 
-      await page.getByRole('link', { name: 'About' }).click();
+      await page.getByRole('link', { name: 'Pricing' }).first().click();
 
-      await expect(page).toHaveURL(/about$/);
+      await expect(page).toHaveURL(/pricing/);
 
       await expect(
-        page.getByText('Welcome to our About page', { exact: false }),
+        page.getByRole('heading', { name: 'One-time credits, lifetime access' }),
       ).toBeVisible();
     });
 
-    test('should navigate to the portfolio page', async ({ page, baseURL }) => {
+    test('should navigate to the privacy page', async ({ page, baseURL }) => {
       await page.goto(`${baseURL}/`);
 
-      await page.getByRole('link', { name: 'Portfolio' }).click();
+      await page.getByRole('link', { name: 'Privacy' }).click();
 
-      await expect(page).toHaveURL(/portfolio$/);
+      await expect(page).toHaveURL(/privacy/);
 
       await expect(
-        page.locator('main').getByRole('link', { name: /^Portfolio/ }),
-      ).toHaveCount(6);
+        page.getByRole('heading', { name: 'Privacy Policy' }),
+      ).toBeVisible();
     });
   });
 });

@@ -1,4 +1,3 @@
-import type { NextFetchEvent, NextRequest } from 'next/server';
 import { detectBot } from '@arcjet/next';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
@@ -9,15 +8,12 @@ import { routing } from './libs/I18nRouting';
 const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
+  '/search(.*)',
+  '/account(.*)',
   '/dashboard(.*)',
+  '/:locale/search(.*)',
+  '/:locale/account(.*)',
   '/:locale/dashboard(.*)',
-]);
-
-const isAuthPage = createRouteMatcher([
-  '/sign-in(.*)',
-  '/:locale/sign-in(.*)',
-  '/sign-up(.*)',
-  '/:locale/sign-up(.*)',
 ]);
 
 // Improve security with Arcjet
@@ -34,45 +30,37 @@ const aj = arcjet.withRule(
   }),
 );
 
-export default async function proxy(
-  request: NextRequest,
-  event: NextFetchEvent,
-) {
+const proxy = clerkMiddleware(async (auth, req) => {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
   if (process.env.ARCJET_KEY) {
-    const decision = await aj.protect(request);
+    const decision = await aj.protect(req);
 
     if (decision.isDenied()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
   }
 
-  // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  if (
-    isAuthPage(request) || isProtectedRoute(request)
-  ) {
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
+  // Protect authenticated routes
+  if (isProtectedRoute(req)) {
+    const locale = req.nextUrl.pathname.match(/^\/(\w{2})/)?.at(1);
+    const localePrefix = locale ? `/${locale}` : '';
+    const signInUrl = new URL(`${localePrefix}/sign-in`, req.url);
 
-        const signInUrl = new URL(`${locale}/sign-in`, req.url);
-
-        await auth.protect({
-          unauthenticatedUrl: signInUrl.toString(),
-        });
-      }
-
-      return handleI18nRouting(req);
-    })(request, event);
+    await auth.protect({
+      unauthenticatedUrl: signInUrl.toString(),
+    });
   }
 
-  return handleI18nRouting(request);
-}
+  // Apply next-intl routing last so auth and security checks see the original pathname.
+  return handleI18nRouting(req);
+});
+
+export default proxy;
 
 export const config = {
   // Match all pathnames except for
   // - … if they start with `/_next`, `/_vercel` or `monitoring`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!_next|_vercel|monitoring|.*\\..*).*)',
+  matcher: '/((?!api/webhooks?|_next|_vercel|monitoring|.*\\..*).*)',
 };

@@ -29,6 +29,8 @@ export default antfu(
     // Ignored paths
     ignores: [
       'migrations/**/*',
+      'README-PROMPT.md',
+      'README-PROMPT-SEO.md',
     ],
   },
   // --- Accessibility Rules ---
