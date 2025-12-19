@@ -53,13 +53,13 @@ const isWebReadableStream = (
   stream: unknown,
 ): stream is ReadableStream<Uint8Array> => typeof (stream as { getReader?: () => unknown })?.getReader === 'function';
 
-const toNodeStream = (stream: ReadableStream<Uint8Array> | NodeJS.ReadableStream): NodeJS.ReadableStream => {
+const toNodeStream = (stream: ReadableStream<Uint8Array> | Readable): Readable => {
   if (isWebReadableStream(stream)) {
     // Convert Web ReadableStream to Node.js ReadableStream
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return Readable.fromWeb(stream as any);
   }
-  return stream as NodeJS.ReadableStream;
+  return stream as Readable;
 };
 
 const buildKey = (filename?: string, prefix = 'uploads') => {
@@ -118,7 +118,7 @@ export const uploadLocalFile = async (
 };
 
 export const uploadImageStream = async (
-  stream: ReadableStream<Uint8Array> | NodeJS.ReadableStream,
+  stream: ReadableStream<Uint8Array> | Readable,
   options?: StreamUploadOptions,
 ): Promise<UploadResult> => {
   // Upload a stream coming from client upload (Request.body or file upload stream)
