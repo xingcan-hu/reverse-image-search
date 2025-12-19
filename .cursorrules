@@ -1,0 +1,23 @@
+# Cursor Rules for reverse-image-search
+
+## 技术栈与命令
+- Next.js 16 App Router + React 19 + TypeScript；Tailwind CSS v4（@layer theme, base, clerk, components, utilities）。
+- 国际化：next-intl（使用 `src/libs/I18nRouting` 的 routing，布局里 `setRequestLocale`，Provider 在 `src/app/[locale]/layout.tsx`，文案来自 `src/locales`，保持 `params: Promise<{ locale: string }>` 签名）。
+- 数据：Drizzle + PostgreSQL（Neon/PGlite）。Schema 在 `src/models/Schema.ts`，改表后跑 `npm run db:generate` 或 `npm run db:migrate`。
+- 认证：Clerk（Provider 在 auth layout，server 侧用 `currentUser`）。受保护路由由 `src/proxy.ts` 的 matcher 控制，i18n 路径下要写对 sign-in/out URLs。
+- 监控与防护：Sentry（instrumentation.ts / instrumentation-client.ts）、LogTape logger（`src/libs/Logger.ts`）、Arcjet 中间件（`src/proxy.ts`、`src/libs/Arcjet.ts`），前端行为用 PostHogProvider。
+
+## 业务基线（反向搜图 + 点数）
+- 页面：`/` 落地页，`/search`（需登录且余额>=1，调用搜图后扣 1 点，失败要回滚），`/pricing`（Stripe Checkout mode=payment，套餐 `price_credit_500`/`price_credit_1200`），`/account`（显示余额/交易，入口跳转 pricing），`/auth/*`（新用户初始化赠送点数），`/terms`/`/privacy`，保持 SEO（sitemap/robots/meta）。
+- API：`POST /api/search` -> 认证 + 原子扣减 credits + 调用搜图引擎 + 失败补偿 + 记录 SearchLog；`POST /api/billing/checkout` -> 创建 Stripe payment session 并透传 credits metadata；Stripe webhook 监听 `checkout.session.completed` 做幂等入账；`GET /api/users/me` 自动建用户并送初始点；`GET /api/users/transactions` 可选。
+- 点数扣减必须“先扣后服务，失败回补”，避免查扣分离；SQL/Drizzle 更新要带 `WHERE credits > 0` 并检查影响行数防止负数。
+
+## 代码风格与约束
+- TypeScript 优先，复用已有 utils/components/templates；保持 Next 16 的 `generateMetadata`/layout 结构和 `setRequestLocale` 调用。
+- 环境变量用 `Env`（middleware/next.config 为减小 bundle 可直接用 `process.env`）；日志用 `logger`；数据库用 drizzle 的 `db`，通过 migration 管理，不要引入 Prisma。
+- UI 使用 Tailwind v4 类名；国际化文本放 `src/locales`，用 `getTranslations`/`useTranslations` 获取。
+- 新增受保护路由需同步更新 `src/proxy.ts` 的 matcher，确保 Arcjet/Clerk 与 i18n 兼容。
+
+## 测试与质量
+- 重要改动至少跑 `npm run lint && npm run check:types && npm test`；涉及路由/表单/翻译检查时补充 `npm run check:i18n`；影响端到端流时跑 `npm run test:e2e`。
+- 保持 commitlint/lefthook 友好，避免遗留调试输出或无用依赖。
