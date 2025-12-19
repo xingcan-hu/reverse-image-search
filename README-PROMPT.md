@@ -708,6 +708,79 @@ AI 需要知道页面有几种状态：
 
 ### 首页seo 
 
-https://pub-057f6d9507aa4f5ea32fe832d4f3b984.r2.dev/uploads/2025-12-19/cc8204b2-d299-46bf-b8fe-1d177f150626.jpeg
-https://pub-057f6d9507aa4f5ea32fe832d4f3b984.r2.dev/images/uploads/2025-12-19/cc8204b2-d299-46bf-b8fe-1d177f150626.jpeg
+
+以下是为你定制的 **ReverseImage.io** SEO 文案全案：
+
+---
+
+## 1. TDK (Meta Tags) 设定
+
+| 标签 | 内容文案 (Copywriting) |
+| --- | --- |
+| **Title** | Reverse Image Search - Search by Image to Find Similar Photos |
+| **Description** | Use our fast reverse image search tool to find similar images, identify sources, and explore high-resolution versions. Support upload, URL, and drag-and-drop. Try ReverseImage.io for free. |
+| **Keywords** | reverse image search, search by image, find similar images, photo lookup, image source finder, reverse photo search |
+
+---
+
+## 2. 页面文本结构 (H1, H2, Content)
+
+### **H1: Reverse Image Search**
+
+*(副标题：Find similar images and identify image sources in seconds.)*
+
+### **H2 布局 (核心价值与功能说明)**
+
+1. **Why Use Reverse Image Search?** (转化意图)
+2. **How to Search by Image on Desktop and Mobile?** (操作指南)
+3. **Key Features of ReverseImage.io** (产品差异化)
+4. **Common Use Cases for Photo Lookup** (场景覆盖)
+
+---
+
+## 3. 具体文案内容
+
+### **A. 功能介绍 (How it works)**
+
+> **Upload with Ease**
+> Simply drag and drop your image, upload a file, or paste a direct image URL. Our advanced algorithm powered by Google Reverse Image API will analyze your photo and find the best matches across the web.
+
+### **B. SEO 增强长尾文本 (用于页面底部)**
+
+> **Secure and Private Image Lookup**
+> At ReverseImage.io, we prioritize your privacy. All uploaded images are processed via secure Cloudflare R2 storage and are automatically deleted after processing. We don't store your personal data or index your private photos.
+> **Multi-Engine Visual Search**
+> Our tool bridges the gap between different search engines. Whether you are looking for a high-res version of a wallpaper, checking for copyright infringement, or identifying a person or product, our reverse photo search provides comprehensive results from the most extensive databases.
+
+---
+
+## 4. FAQ 常见问题 (SEO 权重极高)
+
+> 使用 `Schema.org` 的 FAQ 格式可以增加在 Google 搜索结果中展示的概率。
+
+* **Q: How do I do a reverse image search on my phone?**
+* **A:** Open reverseimage.io on your mobile browser, tap the upload button, select a photo from your gallery, and hit search. It works on both iOS and Android.
+
+
+* **Q: Is this image search tool free?**
+* **A:** Yes! New users get 3 free search credits upon registration. You can purchase additional credit packages for high-volume searching.
+
+
+* **Q: Can I find the original source of an image?**
+* **A:** Absolutely. Our tool scans the web to find where the image first appeared and provides links to the original source.
+
+
+
+---
+
+## 5. 针对 /refunds 页面的 SEO 文案
+
+虽然是功能页，但为了专业度，建议 TDK 如下：
+
+* **Title**: Refund Policy - ReverseImage.io
+* **H1**: Refund & Cancellation Policy
+* **Text**: Our priority is your satisfaction. Please read our policy regarding digital credits and one-time payments. (接着使用前文提到的合规要点)
+
+---
+
 

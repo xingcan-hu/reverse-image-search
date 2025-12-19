@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
-import { ArrowRight, Check, Shield, Sparkles, UploadCloud } from 'lucide-react';
+import { ArrowRight, Check, Globe, Search, Shield, Sparkles, UploadCloud } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { routing } from '@/libs/I18nRouting';
@@ -11,46 +11,55 @@ type IIndexProps = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Reverse image search with pay-per-use credits | Vibe Search',
+    title: 'Reverse Image Search - Search by Image to Find Similar Photos',
     description:
-      'Upload an image, find visually similar results, and only pay when you search. Free credits on sign-up, transparent one-time pricing, and instant answers.',
+      'Use our fast reverse image search tool to find similar images, identify sources, and explore high-resolution versions. Support upload, URL, and drag-and-drop. Try ReverseImage.io for free.',
+    keywords: [
+      'reverse image search',
+      'search by image',
+      'find similar images',
+      'photo lookup',
+      'image source finder',
+      'reverse photo search',
+    ],
   };
 }
 
 const features = [
   {
-    title: 'Upload anything',
-    description: 'Drag & drop JPG, PNG, or WEBP (5MB). We host on secure R2 storage.',
+    title: 'Upload, drag & drop, or paste a URL',
+    description: 'Search with a file upload, drag-and-drop, or a public image URL (desktop and mobile).',
     icon: <UploadCloud className="h-5 w-5 text-indigo-600" />,
   },
   {
-    title: 'Credits-first',
-    description: 'We check your balance and deduct 1 credit per search. Failures are auto-refunded.',
+    title: 'Find sources and similar photos',
+    description: 'Get matching pages, thumbnails, and sources so you can verify where an image appears online.',
+    icon: <Search className="h-5 w-5 text-indigo-600" />,
+  },
+  {
+    title: 'Fast, credits-based pricing',
+    description: 'New users get 3 free credits. Each search costs 1 credit. No subscriptions.',
     icon: <Shield className="h-5 w-5 text-indigo-600" />,
   },
   {
-    title: 'One-time payments',
-    description: '$5 for 500 credits or $10 for 1200 credits. Lifetime access, no subscriptions.',
+    title: 'One-time checkout via Stripe',
+    description: 'Buy credits when you need them. Credits never expire and failed searches are auto-refunded.',
     icon: <Sparkles className="h-5 w-5 text-indigo-600" />,
   },
 ];
 
 const faqs = [
   {
-    q: 'How many free credits do I get?',
-    a: 'New accounts start with 3 free credits so you can test the quality before paying.',
+    q: 'How do I do a reverse image search on my phone?',
+    a: 'Open ReverseImage.io on your mobile browser, tap upload, choose a photo from your gallery, and start the search. It works on both iOS and Android.',
   },
   {
-    q: 'Do credits expire?',
-    a: 'No. Credits never expire, making budgeting simple for teams and solo builders.',
+    q: 'Is this image search tool free?',
+    a: 'Yes. New users get 3 free search credits upon registration. You can buy additional credit packs for higher-volume searching.',
   },
   {
-    q: 'What happens if a search fails?',
-    a: 'We automatically refund the credit and surface an error message so you can retry.',
-  },
-  {
-    q: 'Is this a subscription?',
-    a: 'No. Pricing is one-time. Buy credits when you need them and keep full control.',
+    q: 'Can I find the original source of an image?',
+    a: 'You can discover pages where the image appears and follow links to the sources to help identify where it was published.',
   },
 ];
 
@@ -59,20 +68,40 @@ export default async function Index(props: IIndexProps) {
   setRequestLocale(locale);
   const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqs.map(item => ({
+      '@type': 'Question',
+      'name': item.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': item.a,
+      },
+    })),
+  };
+
   return (
     <div className="space-y-16">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-12 shadow-sm sm:px-10 md:px-14">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-amber-50" />
         <div className="relative grid gap-8 md:grid-cols-2 md:items-center">
           <div className="space-y-6">
             <p className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase">
-              Reverse Image Search
+              ReverseImage.io
             </p>
             <h1 className="text-4xl leading-tight font-semibold text-slate-900 md:text-5xl">
-              Upload an image. Find where it lives.
+              Reverse Image Search
             </h1>
-            <p className="text-lg text-slate-600">
-              Vibe Search runs a credit-first workflow: we verify your balance, launch the search, and only charge when the request succeeds. Every failed attempt is automatically refunded.
+            <p className="text-lg text-slate-600">Find similar images and identify image sources in seconds.</p>
+            <p className="text-sm leading-relaxed text-slate-600">
+              Upload a photo, drag-and-drop a file, or paste a public image URL. We search the web for visually similar matches, surface thumbnails and source links, and help you track where images appear online.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <SignedOut>
@@ -80,7 +109,7 @@ export default async function Index(props: IIndexProps) {
                   href={`${prefix}/sign-up`}
                   className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
                 >
-                  Claim 3 free credits
+                  Try free (3 credits)
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
@@ -95,7 +124,7 @@ export default async function Index(props: IIndexProps) {
                   href={`${prefix}/search`}
                   className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
                 >
-                  Start searching
+                  Search by image
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
@@ -113,11 +142,11 @@ export default async function Index(props: IIndexProps) {
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                 <Check className="h-4 w-4 text-emerald-500" />
-                Instant refunds on failure
+                Source links included
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                 <Check className="h-4 w-4 text-emerald-500" />
-                R2 secure storage
+                Works on mobile & desktop
               </span>
             </div>
           </div>
@@ -149,8 +178,36 @@ export default async function Index(props: IIndexProps) {
                 ))}
               </div>
               <div className="mt-5 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-inner">
-                Drag & drop an image to begin · Charges after success only
+                Drag & drop an image to begin · Try free with 3 credits
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold text-slate-500 uppercase">Why</p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Why use reverse image search?</h2>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">
+            Reverse image search helps you quickly discover where a photo appears online, find visually similar images, and validate sources. It is useful for verifying authenticity, tracking reuse, and locating higher-resolution versions.
+          </p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold text-slate-500 uppercase">How</p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">How to search by image on desktop and mobile</h2>
+          <div className="mt-4 grid gap-3 text-sm text-slate-700">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Desktop</p>
+              <p className="mt-1 text-slate-600">
+                Drag and drop an image, upload a file, or paste a direct image URL, then run the search to see matches.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Mobile</p>
+              <p className="mt-1 text-slate-600">
+                Open ReverseImage.io in your browser, tap upload, pick a photo from your gallery, and search. Works on iOS and Android.
+              </p>
             </div>
           </div>
         </div>
@@ -173,28 +230,28 @@ export default async function Index(props: IIndexProps) {
 
       <section className="grid gap-6 md:grid-cols-[1.1fr_1fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase">How it works</p>
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Three steps to find every match</h2>
+          <p className="text-xs font-semibold text-slate-500 uppercase">Key features</p>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Key features of ReverseImage.io</h2>
           <ol className="mt-4 space-y-3 text-slate-700">
             <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">1</span>
               <div>
-                <p className="font-semibold">Upload your image</p>
-                <p className="text-sm text-slate-600">Drop JPG/PNG/WEBP up to 5MB. We host on Cloudflare R2 for instant availability.</p>
+                <p className="font-semibold">Upload with ease</p>
+                <p className="text-sm text-slate-600">Drag and drop, upload a file, or use a public image URL to start searching.</p>
               </div>
             </li>
             <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">2</span>
               <div>
-                <p className="font-semibold">We check your credits</p>
-                <p className="text-sm text-slate-600">Balance ≥ 1 is required. Otherwise we guide you to pricing without charging anything.</p>
+                <p className="font-semibold">Fast results with clear links</p>
+                <p className="text-sm text-slate-600">We return thumbnails, titles, and source links so you can quickly verify matches.</p>
               </div>
             </li>
             <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">3</span>
               <div>
-                <p className="font-semibold">Results in seconds</p>
-                <p className="text-sm text-slate-600">We call the search engine, return visual matches, and deduct exactly 1 credit. Failures trigger an automatic refund.</p>
+                <p className="font-semibold">Simple credits, no subscriptions</p>
+                <p className="text-sm text-slate-600">Each successful search costs 1 credit. Failed searches are auto-refunded. Credits never expire.</p>
               </div>
             </li>
           </ol>
@@ -202,30 +259,72 @@ export default async function Index(props: IIndexProps) {
         <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Pricing</p>
-              <h3 className="text-xl font-semibold text-slate-900">Lifetime credits</h3>
+              <p className="text-xs font-semibold text-slate-500 uppercase">Use cases</p>
+              <h3 className="text-xl font-semibold text-slate-900">Common use cases for photo lookup</h3>
             </div>
+          </div>
+          <div className="grid gap-3 text-sm text-slate-700">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Find the original source</p>
+              <p className="mt-1 text-slate-600">Locate pages where an image appears and follow source links.</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Check copyright and reuse</p>
+              <p className="mt-1 text-slate-600">Spot reposts, duplicates, and potential infringement quickly.</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Identify products or people</p>
+              <p className="mt-1 text-slate-600">Find similar images, listings, and context around a visual match.</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="font-semibold text-slate-900">Find a higher-resolution version</p>
+              <p className="mt-1 text-slate-600">Discover larger images and alternative crops for the same subject.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href={`${prefix}/pricing`}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
             >
-              See details
+              View pricing
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href={`${prefix}/search`}
+              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
+            >
+              Start a search
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-900">Starter</p>
-              <p className="text-3xl font-bold text-slate-900">$5</p>
-              <p className="text-sm text-slate-600">500 credits · Never expires</p>
+        </div>
+      </section>
+
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
+              <Shield className="h-5 w-5 text-indigo-600" />
             </div>
-            <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Pro · Best value</p>
-              <p className="text-3xl font-bold text-slate-900">$10</p>
-              <p className="text-sm text-slate-700">1200 credits · One-time</p>
+            <div>
+              <h2 className="text-2xl font-semibold text-slate-900">Secure and private image lookup</h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                We process uploads via secure Cloudflare R2 storage to generate a public URL for searching. We do not train models on your uploads or index your private photos.
+              </p>
             </div>
           </div>
-          <div className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white">
-            SEO FAQ · Credits · Refunds · No subscription · Points never expire
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
+              <Globe className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-slate-900">Google-powered visual search</h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Our reverse photo search uses Google reverse image results (via SerpApi) to provide broad coverage across the web—helping you identify sources, find similar images, and track reuse.
+              </p>
+            </div>
           </div>
         </div>
       </section>
