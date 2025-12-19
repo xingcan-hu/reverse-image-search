@@ -43,8 +43,13 @@ const proxy = clerkMiddleware(async (auth, req) => {
 
   // Protect authenticated routes
   if (isProtectedRoute(req)) {
-    const locale = req.nextUrl.pathname.match(/^\/(\w{2})/)?.at(1);
-    const localePrefix = locale ? `/${locale}` : '';
+    // Check if pathname starts with a valid locale
+    const pathname = req.nextUrl.pathname;
+    const pathLocale = routing.locales.find((locale) => 
+      pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+    );
+    const locale = pathLocale || routing.defaultLocale;
+    const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
     const signInUrl = new URL(`${localePrefix}/sign-in`, req.url);
 
     await auth.protect({
