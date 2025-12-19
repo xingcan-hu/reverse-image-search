@@ -18,6 +18,7 @@ export const SearchClient = () => {
   const [status, setStatus] = useState<SearchState>('idle');
   const [results, setResults] = useState<ImageSearchResult[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lowBalanceOpen, setLowBalanceOpen] = useState(false);
   const locale = useLocale();
@@ -27,6 +28,8 @@ export const SearchClient = () => {
   const handleSearch = useCallback(async (file: File) => {
     setStatus('searching');
     setErrorMessage(null);
+    setResults([]);
+    setImageUrlInput('');
     const formData = new FormData();
     formData.append('file', file);
 
@@ -71,6 +74,75 @@ export const SearchClient = () => {
       await refreshCredits();
     }
   }, [apiPrefix, refreshCredits, setCredits]);
+
+  const handleSearchUrl = useCallback(async () => {
+    const raw = imageUrlInput.trim();
+
+    if (!raw) {
+      toast.error('Missing image URL', { description: 'Paste a public image URL and try again.' });
+      return;
+    }
+
+    try {
+      const parsed = new URL(raw);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        toast.error('Invalid URL', { description: 'Please use an http(s) image URL.' });
+        return;
+      }
+    } catch {
+      toast.error('Invalid URL', { description: 'Please enter a valid image URL.' });
+      return;
+    }
+
+    setStatus('searching');
+    setErrorMessage(null);
+    setResults([]);
+    setPreviewUrl(raw);
+
+    try {
+      const response = await fetch(`${apiPrefix}/api/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl: raw }),
+      });
+
+      if (response.status === 402) {
+        setLowBalanceOpen(true);
+        setStatus('idle');
+        return;
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        const message = error.error ?? 'Search failed. Please retry.';
+        setStatus('error');
+        setErrorMessage(message);
+        toast.error('Search failed', { description: message });
+        await refreshCredits();
+        return;
+      }
+
+      const payload = await response.json();
+      setResults(payload.data ?? []);
+      setStatus('success');
+      setErrorMessage(null);
+
+      if (typeof payload.meta?.remainingCredits === 'number') {
+        setCredits(payload.meta.remainingCredits);
+      } else {
+        await refreshCredits();
+      }
+
+      toast.success('Search complete', { description: 'Showing similar images below.' });
+    } catch {
+      setStatus('error');
+      setErrorMessage('Search failed. Please retry.');
+      toast.error('Search failed', { description: 'Please try again.' });
+      await refreshCredits();
+    }
+  }, [apiPrefix, imageUrlInput, refreshCredits, setCredits]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -161,6 +233,35 @@ export const SearchClient = () => {
             </p>
             <p className="mt-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm">
               Cost: 1 credit · Refunds on failure
+            </p>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold text-slate-500 uppercase">Or paste an image URL</p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+              <input
+                value={imageUrlInput}
+                onChange={event => setImageUrlInput(event.target.value)}
+                placeholder="https://example.com/image.jpg"
+                inputMode="url"
+                autoComplete="off"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+                disabled={isSearching}
+              />
+              <button
+                type="button"
+                onClick={() => void handleSearchUrl()}
+                disabled={isSearching || !imageUrlInput.trim()}
+                className={cn(
+                  'inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md',
+                  (isSearching || !imageUrlInput.trim()) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm',
+                )}
+              >
+                Search URL
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Tip: Use a direct, publicly accessible image URL. Redirects may not work.
             </p>
           </div>
 
@@ -283,7 +384,7 @@ export const SearchClient = () => {
 
           {status === 'idle' && results.length === 0 && (
             <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-700">
-              Upload an image to see results. Need more credits? Visit the pricing page to recharge instantly.
+              Upload an image or paste a URL to see results. Need more credits? Visit the pricing page to recharge instantly.
             </div>
           )}
         </div>

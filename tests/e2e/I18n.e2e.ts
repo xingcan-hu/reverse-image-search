@@ -5,7 +5,7 @@ test.describe('I18n', () => {
     await page.goto('/');
 
     await expect(
-      page.getByRole('heading', { name: 'Upload an image. Find where it lives.' }),
+      page.getByRole('heading', { name: 'Reverse Image Search', level: 1 }),
     ).toBeVisible();
   });
 

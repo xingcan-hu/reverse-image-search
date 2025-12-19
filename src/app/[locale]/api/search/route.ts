@@ -26,22 +26,63 @@ export const POST = async (request: Request) => {
     const userId = user.id;
 
     stage = 'validate';
-    const formData = await request.formData();
-    const file = formData.get('file') ?? formData.get('image');
+    const contentType = request.headers.get('content-type') ?? '';
+    let file: File | null = null;
 
-    if (!file || !(file instanceof File)) {
-      return NextResponse.json({ error: 'Please upload an image to search.' }, { status: 400 });
-    }
+    if (contentType.includes('application/json')) {
+      const body = await request.json().catch(() => null) as unknown;
+      const rawUrl = typeof body === 'object' && body !== null && 'imageUrl' in body
+        ? (body as { imageUrl?: unknown }).imageUrl
+        : null;
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'Unsupported file type. Please upload a JPG, PNG, or WEBP image.' },
-        { status: 415 },
-      );
-    }
+      const candidate = typeof rawUrl === 'string' ? rawUrl.trim() : '';
 
-    if (file.size > MAX_UPLOAD_SIZE) {
-      return NextResponse.json({ error: 'File is too large. Max size is 5MB.' }, { status: 413 });
+      if (!candidate) {
+        return NextResponse.json(
+          { error: 'Please provide an image URL to search.' },
+          { status: 400 },
+        );
+      }
+
+      try {
+        const parsed = new URL(candidate);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          return NextResponse.json(
+            { error: 'Invalid image URL. Please provide an http(s) URL.' },
+            { status: 400 },
+          );
+        }
+      } catch {
+        return NextResponse.json(
+          { error: 'Invalid image URL. Please provide a valid URL.' },
+          { status: 400 },
+        );
+      }
+
+      uploadedUrl = candidate;
+    } else {
+      const formData = await request.formData();
+      const fileValue = formData.get('file') ?? formData.get('image');
+
+      if (!fileValue || !(fileValue instanceof File)) {
+        return NextResponse.json(
+          { error: 'Please upload an image or provide an image URL to search.' },
+          { status: 400 },
+        );
+      }
+
+      if (!ALLOWED_TYPES.includes(fileValue.type)) {
+        return NextResponse.json(
+          { error: 'Unsupported file type. Please upload a JPG, PNG, or WEBP image.' },
+          { status: 415 },
+        );
+      }
+
+      if (fileValue.size > MAX_UPLOAD_SIZE) {
+        return NextResponse.json({ error: 'File is too large. Max size is 5MB.' }, { status: 413 });
+      }
+
+      file = fileValue;
     }
 
     stage = 'charge';
@@ -71,17 +112,19 @@ export const POST = async (request: Request) => {
       afterCredits: debitRow.credits,
     }));
 
-    stage = 'upload';
-    const { url } = await uploadImageToR2(file);
-    uploadedUrl = url;
+    if (file) {
+      stage = 'upload';
+      const { url } = await uploadImageToR2(file);
+      uploadedUrl = url;
+    }
 
     stage = 'provider';
-    const results = await runImageSearch(url);
+    const results = await runImageSearch(uploadedUrl);
 
     stage = 'log';
     await db.insert(searchLogs).values({
       userId,
-      imageUrl: url,
+      imageUrl: uploadedUrl,
       cost: SEARCH_COST,
       providerStatus: 'success',
     });

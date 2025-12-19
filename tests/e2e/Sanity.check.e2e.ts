@@ -18,7 +18,7 @@ test.describe('Sanity', () => {
       await page.goto(`${baseURL}/`);
 
       await expect(
-        page.getByRole('heading', { name: 'Upload an image. Find where it lives.' }),
+        page.getByRole('heading', { name: 'Reverse Image Search', level: 1 }),
       ).toBeVisible();
     });
 

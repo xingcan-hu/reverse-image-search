@@ -7,7 +7,7 @@ type RefundPolicyProps = {
 };
 
 export const RefundPolicy = ({
-  supportEmail = 'support@yourdomain.com',
+  supportEmail = 'help@support.reverseimage.io',
   refundWindowDays = 14,
 }: RefundPolicyProps) => {
   const sections: Array<{ title: string; body: Array<{ key: string; content: ReactNode }> }> = [

@@ -6,7 +6,7 @@ test.describe('Visual testing', () => {
       await page.goto('/');
 
       await expect(
-        page.getByRole('heading', { name: 'Upload an image. Find where it lives.' }),
+        page.getByRole('heading', { name: 'Reverse Image Search', level: 1 }),
       ).toBeVisible();
 
       await takeSnapshot(page, testInfo);
