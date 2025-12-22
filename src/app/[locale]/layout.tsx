@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { CreditsProvider } from '@/components/credits/CreditsProvider';
@@ -68,6 +69,19 @@ export default async function RootLayout(props: {
   return (
     <html lang={locale} className={inter.className}>
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-6MMH20X8FF"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6MMH20X8FF');
+          `}
+        </Script>
         <ClerkProvider
           appearance={{
             cssLayerName: 'clerk',
