@@ -6,7 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/dashboard', '/account'],
+      // Disallow protected routes (require authentication)
+      // These paths match all locale variants (e.g., /account, /en/account)
+      disallow: ['/dashboard', '/account', '/api'],
     },
     sitemap: `${getBaseUrl()}/sitemap.xml`,
   };
