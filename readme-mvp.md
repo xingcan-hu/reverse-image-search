@@ -1100,3 +1100,7 @@ API contract (MUST):
 - GET /api/users/me returns user profile and credits and auto-creates user on first call.
 - GET /api/users/transactions returns latest 10 transactions.
 ```
+
+
+
+

@@ -15,6 +15,13 @@
       "when": 1766073079505,
       "tag": "0001_tired_skaar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767166192255,
+      "tag": "0002_neat_azazel",
+      "breakpoints": true
     }
   ]
 }

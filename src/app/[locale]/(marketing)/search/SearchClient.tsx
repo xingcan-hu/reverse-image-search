@@ -5,6 +5,7 @@ import type { ImageSearchResult } from '@/libs/SearchProvider';
 import { useAuth } from '@clerk/nextjs';
 import { ArrowRight, Globe, ImageIcon, Loader2, Search, ShieldCheck, Sparkles, UploadCloud, Zap } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -81,6 +82,7 @@ export const SearchClient = () => {
   const { isSignedIn } = useAuth();
   const apiPrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
   const { credits, setCredits, refreshCredits } = useCredits();
+  const outOfCredits = typeof credits === 'number' && credits <= 0;
 
   const checkAuthAndRedirect = useCallback(() => {
     if (!isSignedIn) {
@@ -94,6 +96,12 @@ export const SearchClient = () => {
 
   const handleSearch = useCallback(async (file: File) => {
     if (!checkAuthAndRedirect()) {
+      return;
+    }
+
+    if (outOfCredits) {
+      setLowBalanceOpen(true);
+      setStatus('idle');
       return;
     }
 
@@ -152,10 +160,16 @@ export const SearchClient = () => {
       toast.error('Search failed', { description: 'Please upload again.' });
       await refreshCredits();
     }
-  }, [apiPrefix, refreshCredits, setCredits, checkAuthAndRedirect, router]);
+  }, [apiPrefix, refreshCredits, setCredits, checkAuthAndRedirect, router, outOfCredits]);
 
   const handleSearchUrl = useCallback(async () => {
     if (!checkAuthAndRedirect()) {
+      return;
+    }
+
+    if (outOfCredits) {
+      setLowBalanceOpen(true);
+      setStatus('idle');
       return;
     }
 
@@ -233,7 +247,7 @@ export const SearchClient = () => {
       toast.error('Search failed', { description: 'Please try again.' });
       await refreshCredits();
     }
-  }, [apiPrefix, imageUrlInput, refreshCredits, setCredits, checkAuthAndRedirect, router]);
+  }, [apiPrefix, imageUrlInput, refreshCredits, setCredits, checkAuthAndRedirect, router, outOfCredits]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -244,6 +258,12 @@ export const SearchClient = () => {
         return;
       }
 
+      if (outOfCredits) {
+        setLowBalanceOpen(true);
+        setStatus('idle');
+        return;
+      }
+
       const file = acceptedFiles.at(0);
       if (!file) {
         return;
@@ -251,7 +271,7 @@ export const SearchClient = () => {
       setPreviewUrl(URL.createObjectURL(file));
       void handleSearch(file);
     },
-    [isSignedIn, apiPrefix, router, handleSearch],
+    [isSignedIn, apiPrefix, router, handleSearch, outOfCredits],
   );
 
   const onDropRejected = useCallback((rejections: FileRejection[]) => {
@@ -474,6 +494,30 @@ export const SearchClient = () => {
                 credits
               </div>
             </div>
+
+            {outOfCredits && (
+              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                <p className="font-semibold">You are out of credits.</p>
+                <p className="mt-1 text-amber-800">
+                  Get free credits by checking in daily or inviting friends, or buy credits anytime.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setLowBalanceOpen(true)}
+                    className="inline-flex items-center justify-center rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-600 hover:shadow-md"
+                  >
+                    Get free credits
+                  </button>
+                  <Link
+                    href={locale === routing.defaultLocale ? '/pricing' : `/${locale}/pricing`}
+                    className="inline-flex items-center justify-center rounded-full border border-amber-200 px-4 py-2 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100"
+                  >
+                    Buy credits
+                  </Link>
+                </div>
+              </div>
+            )}
 
             <div
               {...getRootProps()}
