@@ -65,7 +65,7 @@ export const userCheckins = pgTable('user_checkins', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  checkinDay: date('checkin_day').notNull(),
+  checkinDay: date('checkin_day', { mode: 'date' }).notNull(),
   rewardCredits: integer('reward_credits').notNull().default(1),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
 }, table => ({

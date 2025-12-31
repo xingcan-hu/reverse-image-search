@@ -17,7 +17,8 @@ const generateReferralCode = () => {
   let code = '';
 
   for (let i = 0; i < CODE_LENGTH; i += 1) {
-    code += alphabet[bytes[i] % alphabet.length];
+    const byte = bytes[i] ?? 0;
+    code += alphabet[byte % alphabet.length];
   }
 
   return code;
@@ -29,6 +30,10 @@ const maskEmail = (email?: string | null) => {
   }
 
   const [name, domain] = email.split('@');
+
+  if (!name) {
+    return null;
+  }
 
   if (!domain) {
     return null;
