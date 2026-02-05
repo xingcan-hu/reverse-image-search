@@ -12,6 +12,20 @@ const getPrimaryEmail = (emailAddresses: Array<{ emailAddress: string }> = []) =
   return emailAddresses.at(0)?.emailAddress;
 };
 
+const syncUserEmail = async (user: AppUser, email?: string): Promise<AppUser> => {
+  if (!email || user.email === email) {
+    return user;
+  }
+
+  const [updatedUser] = await db
+    .update(users)
+    .set({ email })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  return updatedUser ?? user;
+};
+
 export const getOrCreateUser = async (): Promise<AppUser> => {
   const clerkUser = await currentUser();
 
@@ -19,46 +33,46 @@ export const getOrCreateUser = async (): Promise<AppUser> => {
     throw new Error('Unauthorized');
   }
 
+  const clerkId = clerkUser.id;
   const email = getPrimaryEmail(clerkUser.emailAddresses);
 
   const existingUser = await db.query.users.findFirst({
-    where: eq(users.clerkId, clerkUser.id),
+    where: eq(users.clerkId, clerkId),
   });
 
   if (existingUser) {
-    if (email && existingUser.email !== email) {
-      const [updatedUser] = await db
-        .update(users)
-        .set({ email })
-        .where(eq(users.id, existingUser.id))
-        .returning();
-
-      return updatedUser ?? existingUser;
-    }
-
-    return existingUser;
+    return syncUserEmail(existingUser, email);
   }
 
   const [createdUser] = await db
     .insert(users)
     .values({
-      clerkId: clerkUser.id,
+      clerkId,
       email,
       credits: DEFAULT_STARTING_CREDITS,
     })
+    .onConflictDoNothing({ target: users.clerkId })
     .returning();
 
-  if (!createdUser) {
-    throw new Error('Failed to create user');
+  if (createdUser) {
+    logger.info('User created', () => ({
+      userId: createdUser.id,
+      clerkId: createdUser.clerkId,
+      credits: createdUser.credits,
+    }));
+
+    return createdUser;
   }
 
-  logger.info('User created', () => ({
-    userId: createdUser.id,
-    clerkId: createdUser.clerkId,
-    credits: createdUser.credits,
-  }));
+  const conflictedUser = await db.query.users.findFirst({
+    where: eq(users.clerkId, clerkId),
+  });
 
-  return createdUser;
+  if (!conflictedUser) {
+    throw new Error('Failed to load user');
+  }
+
+  return syncUserEmail(conflictedUser, email);
 };
 
 export const getUserByClerkId = async (clerkId: string) => {
