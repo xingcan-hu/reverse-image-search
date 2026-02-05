@@ -331,7 +331,7 @@ export const SearchClient = () => {
   if (!isSignedIn) {
     return (
       <>
-        <LowBalanceDialog open={lowBalanceOpen} onClose={() => setLowBalanceOpen(false)} />
+        <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
         <div className="space-y-8">
           {/* Hero CTA */}
           <div className="mx-auto max-w-3xl text-center">
@@ -477,7 +477,7 @@ export const SearchClient = () => {
   // For authenticated users, show the full two-column layout
   return (
     <>
-      <LowBalanceDialog open={lowBalanceOpen} onClose={() => setLowBalanceOpen(false)} />
+      <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">
           {/* Upload Section */}

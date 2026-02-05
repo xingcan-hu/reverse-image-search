@@ -7,6 +7,8 @@ type PricingPageProps = {
   params: Promise<{ locale: string }>;
 };
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Pricing | Vibe Search',
   description: 'Buy lifetime credits for reverse image search. $5 for 500 credits or $10 for 1200 credits. No subscriptions.',

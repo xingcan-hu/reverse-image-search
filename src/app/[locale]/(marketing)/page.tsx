@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { ArrowRight, Check, Globe, Search, Shield, Sparkles } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { routing } from '@/libs/I18nRouting';
+import { HomeBottomCta, HomeHeroCtas, HomeSignedOutBanner, HomeUseCasesSignedOutCta } from './HomeAuth';
 import { SearchClient } from './search/SearchClient';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
 };
+
+export const dynamic = 'force-static';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -108,45 +110,12 @@ export default async function Index(props: IIndexProps) {
             <p className="text-lg text-slate-600">
               Search across 50+ stock sites. Find higher resolution versions. Identify sources instantly.
             </p>
-            <SignedOut>
-              <div className="rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-5 py-4">
-                <p className="text-base font-semibold text-slate-900">
-                  <Sparkles className="mb-1 inline h-5 w-5 text-indigo-600" />
-                  {' '}
-                  Get 3 Free Searches - No Credit Card Required
-                </p>
-                <p className="mt-2 text-sm text-slate-700">
-                  Try our reverse image search for free. Find similar images, track sources, and discover higher resolution versions across the web.
-                </p>
-              </div>
-            </SignedOut>
+            <HomeSignedOutBanner />
             <p className="text-sm leading-relaxed text-slate-600">
               Upload a photo, drag-and-drop a file, or paste a public image URL. We search the web for visually similar matches, surface thumbnails and source links, and help you track where images appear online.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <SignedOut>
-                <Link
-                  href={`${prefix}/sign-up`}
-                  className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
-                >
-                  Try free (3 credits)
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href={`${prefix}/pricing`}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-                >
-                  View pricing
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link
-                  href={`${prefix}/account`}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-                >
-                  View balance
-                </Link>
-              </SignedIn>
+              <HomeHeroCtas prefix={prefix} />
             </div>
             <div className="flex flex-wrap gap-3 text-sm font-semibold text-slate-600">
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
@@ -274,15 +243,7 @@ export default async function Index(props: IIndexProps) {
               View pricing
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <SignedOut>
-              <Link
-                href={`${prefix}/sign-up`}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
-              >
-                Get started
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </SignedOut>
+            <HomeUseCasesSignedOutCta prefix={prefix} />
           </div>
         </div>
       </section>
@@ -340,27 +301,7 @@ export default async function Index(props: IIndexProps) {
           <p className="mt-4 text-lg text-slate-300">
             Join thousands of photographers, designers, and content creators using ReverseImage.io to track image usage and find higher quality versions.
           </p>
-          <SignedOut>
-            <Link
-              href={`${prefix}/sign-up`}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
-            >
-              Get Started with 3 Free Credits
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-            <p className="mt-4 text-sm text-slate-400">
-              No credit card required · Start searching in seconds
-            </p>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              href={`${prefix}/search`}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
-            >
-              Start Searching Now
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </SignedIn>
+          <HomeBottomCta prefix={prefix} />
         </div>
       </section>
     </div>

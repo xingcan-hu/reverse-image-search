@@ -11,10 +11,10 @@ import { cn } from '@/utils/Cn';
 
 type LowBalanceDialogProps = {
   open: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
 };
 
-export const LowBalanceDialog = ({ open, onClose }: LowBalanceDialogProps) => {
+export const LowBalanceDialog = ({ open, onCloseAction }: LowBalanceDialogProps) => {
   const locale = useLocale();
   const { refreshCredits } = useCredits();
   const apiPrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
@@ -172,7 +172,7 @@ export const LowBalanceDialog = ({ open, onClose }: LowBalanceDialogProps) => {
           <button
             type="button"
             aria-label="Close dialog"
-            onClick={onClose}
+            onClick={onCloseAction}
             className="rounded-full p-1 text-slate-500 transition hover:bg-slate-100"
           >
             <X className="h-5 w-5" />
@@ -207,7 +207,7 @@ export const LowBalanceDialog = ({ open, onClose }: LowBalanceDialogProps) => {
               </button>
             </div>
             {checkinSuccess && (
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 animate-bounce">
+              <div className="mt-3 inline-flex animate-bounce items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
                 +1 credit added
               </div>
@@ -217,14 +217,14 @@ export const LowBalanceDialog = ({ open, onClose }: LowBalanceDialogProps) => {
             <Link
               href={pricingHref}
               className="font-semibold text-slate-700 hover:underline"
-              onClick={onClose}
+              onClick={onCloseAction}
             >
               Go to pricing
             </Link>
             <button
               type="button"
               className="font-semibold text-slate-500 transition hover:text-slate-700"
-              onClick={onClose}
+              onClick={onCloseAction}
             >
               Maybe later
             </button>

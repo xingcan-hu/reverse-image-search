@@ -1,11 +1,37 @@
-import { detectBot } from '@arcjet/next';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
-import arcjet from '@/libs/Arcjet';
 import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
+
+let ajPromise: Promise<any> | null = null;
+
+const getArcjet = async () => {
+  if (!ajPromise) {
+    ajPromise = (async () => {
+      const [{ detectBot }, arcjetModule] = await Promise.all([
+        import('@arcjet/next'),
+        import('@/libs/Arcjet'),
+      ]);
+
+      return arcjetModule.default.withRule(
+        detectBot({
+          mode: 'LIVE',
+          // Block all bots except the following
+          allow: [
+            // See https://docs.arcjet.com/bot-protection/identifying-bots
+            'CATEGORY:SEARCH_ENGINE', // Allow search engines
+            'CATEGORY:PREVIEW', // Allow preview links to show OG images
+            'CATEGORY:MONITOR', // Allow uptime monitoring services
+          ],
+        }),
+      );
+    })();
+  }
+
+  return ajPromise;
+};
 
 const isProtectedRoute = createRouteMatcher([
   '/account(.*)',
@@ -14,24 +40,10 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/dashboard(.*)',
 ]);
 
-// Improve security with Arcjet
-const aj = arcjet.withRule(
-  detectBot({
-    mode: 'LIVE',
-    // Block all bots except the following
-    allow: [
-      // See https://docs.arcjet.com/bot-protection/identifying-bots
-      'CATEGORY:SEARCH_ENGINE', // Allow search engines
-      'CATEGORY:PREVIEW', // Allow preview links to show OG images
-      'CATEGORY:MONITOR', // Allow uptime monitoring services
-    ],
-  }),
-);
-
 const proxy = clerkMiddleware(async (auth, req) => {
-  // Verify the request with Arcjet
-  // Use `process.env` instead of Env to reduce bundle size in middleware
+  // Verify the request with Arcjet, but only initialize it when a key is configured.
   if (process.env.ARCJET_KEY) {
+    const aj = await getArcjet();
     const decision = await aj.protect(req);
 
     if (decision.isDenied()) {

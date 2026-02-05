@@ -1,4 +1,4 @@
-import { boolean, date, integer, pgTable, serial, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { boolean, date, index, integer, pgTable, serial, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -47,7 +47,9 @@ export const transactions = pgTable('transactions', {
   stripeSessionId: text('stripe_session_id').notNull().unique(),
   status: text('status').notNull().default('succeeded'),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
-});
+}, table => ({
+  userCreatedAtIdx: index('transactions_user_created_at_idx').on(table.userId, table.createdAt),
+}));
 
 export const searchLogs = pgTable('search_logs', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -58,7 +60,9 @@ export const searchLogs = pgTable('search_logs', {
   providerStatus: text('provider_status').notNull().default('success'),
   cost: integer('cost').notNull().default(1),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
-});
+}, table => ({
+  userIdx: index('search_logs_user_id_idx').on(table.userId),
+}));
 
 export const userCheckins = pgTable('user_checkins', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -102,4 +106,6 @@ export const referrals = pgTable('referrals', {
   rewardCredits: integer('reward_credits').notNull().default(20),
   rewardGrantedAt: timestamp('reward_granted_at', { mode: 'date' }),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
-});
+}, table => ({
+  inviterCreatedAtIdx: index('referrals_inviter_created_at_idx').on(table.inviterUserId, table.createdAt),
+}));

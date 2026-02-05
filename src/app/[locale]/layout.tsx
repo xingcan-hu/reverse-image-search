@@ -7,7 +7,6 @@ import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
-import { CreditsProvider } from '@/components/credits/CreditsProvider';
 import { routing } from '@/libs/I18nRouting';
 import { ClerkLocalizations } from '@/utils/AppConfig';
 import '@/styles/global.css';
@@ -95,10 +94,8 @@ export default async function RootLayout(props: {
         >
           <NextIntlClientProvider>
             <PostHogProvider>
-              <CreditsProvider>
-                <Toaster richColors position="top-right" />
-                {props.children}
-              </CreditsProvider>
+              <Toaster richColors position="top-right" />
+              {props.children}
             </PostHogProvider>
           </NextIntlClientProvider>
         </ClerkProvider>
