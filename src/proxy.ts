@@ -1,9 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
-import { routing } from './libs/I18nRouting';
-
-const handleI18nRouting = createMiddleware(routing);
 
 let ajPromise: Promise<any> | null = null;
 
@@ -41,8 +37,17 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 const proxy = clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname;
+  const isApiRoute = /^\/(?:[^/]+\/)?api(?:\/|$)/.test(pathname);
+  const isWebhookRoute = /^\/(?:[^/]+\/)?api\/webhooks?(?:\/|$)/.test(pathname);
+
+  if (isWebhookRoute) {
+    return NextResponse.next();
+  }
+
   // Verify the request with Arcjet, but only initialize it when a key is configured.
-  if (process.env.ARCJET_KEY) {
+  // Avoid adding Arcjet latency to API routes (they already do auth + DB work).
+  if (process.env.ARCJET_KEY && !isApiRoute) {
     const aj = await getArcjet();
     const decision = await aj.protect(req);
 
@@ -53,29 +58,26 @@ const proxy = clerkMiddleware(async (auth, req) => {
 
   // Protect authenticated routes
   if (isProtectedRoute(req)) {
-    // Check if pathname starts with a valid locale
-    const pathname = req.nextUrl.pathname;
-    const pathLocale = routing.locales.find(locale =>
-      pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
-    );
-    const locale = pathLocale || routing.defaultLocale;
-    const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-    const signInUrl = new URL(`${localePrefix}/sign-in`, req.url);
-
+    const signInUrl = new URL('/sign-in', req.url);
     await auth.protect({
       unauthenticatedUrl: signInUrl.toString(),
     });
   }
 
-  // Apply next-intl routing last so auth and security checks see the original pathname.
-  return handleI18nRouting(req);
+  return NextResponse.next();
 });
 
 export default proxy;
 
 export const config = {
-  // Match all pathnames except for
-  // - … if they start with `/_next`, `/_vercel` or `monitoring`
-  // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!api/webhooks?|_next|_vercel|monitoring|.*\\..*).*)',
+  // Keep middleware off public pages (prefetch can generate a lot of requests).
+  // We only run it for authenticated pages and API routes.
+  matcher: [
+    '/account(.*)',
+    '/dashboard(.*)',
+    '/api/:path*',
+    '/:locale/account(.*)',
+    '/:locale/dashboard(.*)',
+    '/:locale/api/:path*',
+  ],
 };

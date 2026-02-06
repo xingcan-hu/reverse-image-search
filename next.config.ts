@@ -4,6 +4,8 @@ import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
 import './src/libs/Env';
 
+const DEFAULT_LOCALE = 'en';
+
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
   devIndicators: {
@@ -63,6 +65,46 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
     telemetry: false,
   });
 }
+
+const normalizeRewrites = (rewrites: Awaited<ReturnType<NonNullable<NextConfig['rewrites']>>> | undefined) => {
+  if (!rewrites) {
+    return { beforeFiles: [], afterFiles: [], fallback: [] };
+  }
+
+  if (Array.isArray(rewrites)) {
+    return { beforeFiles: [], afterFiles: rewrites, fallback: [] };
+  }
+
+  return {
+    beforeFiles: rewrites.beforeFiles ?? [],
+    afterFiles: rewrites.afterFiles ?? [],
+    fallback: rewrites.fallback ?? [],
+  };
+};
+
+// Make default-locale routes work without the `/${DEFAULT_LOCALE}` prefix so we can keep
+// the `[locale]` segment without running a middleware on every public route.
+const existingRewrites = configWithPlugins.rewrites;
+configWithPlugins.rewrites = async () => {
+  const prior = typeof existingRewrites === 'function'
+    ? await existingRewrites()
+    : existingRewrites;
+
+  const normalized = normalizeRewrites(prior as any);
+
+  return {
+    beforeFiles: [
+      { source: '/', destination: `/${DEFAULT_LOCALE}` },
+      {
+        source: `/:path((?!${DEFAULT_LOCALE}(?:/|$)|_next|_vercel|monitoring|api/webhooks?(?:/|$)|.*\\\\..*).*)`,
+        destination: `/${DEFAULT_LOCALE}/:path`,
+      },
+      ...normalized.beforeFiles,
+    ],
+    afterFiles: normalized.afterFiles,
+    fallback: normalized.fallback,
+  };
+};
 
 const nextConfig = configWithPlugins;
 export default nextConfig;
