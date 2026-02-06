@@ -8,8 +8,12 @@ export default async function CenteredLayout(props: {
   setRequestLocale(locale);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      {props.children}
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
+      <div className="pointer-events-none absolute -top-20 right-0 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(0,113,227,0.2)_0%,rgba(0,113,227,0)_72%)]" />
+      <div className="pointer-events-none absolute -bottom-24 -left-16 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(42,169,255,0.16)_0%,rgba(42,169,255,0)_74%)]" />
+      <div className="relative w-full max-w-5xl">
+        {props.children}
+      </div>
     </div>
   );
 }

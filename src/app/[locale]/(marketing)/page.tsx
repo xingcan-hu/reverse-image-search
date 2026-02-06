@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowRight, Check, Globe, Search, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Globe, ImageUp, Search, Shield, Sparkles } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
 import Link from '@/components/AppLink';
 import { routing } from '@/libs/I18nRouting';
@@ -32,22 +32,47 @@ const features = [
   {
     title: 'Search Across 50+ Sources',
     description: 'Search Getty Images, Shutterstock, Unsplash, Pexels, and dozens more stock sites simultaneously.',
-    icon: <Globe className="h-5 w-5 text-indigo-600" />,
+    icon: Globe,
   },
   {
     title: 'Find Higher Resolution',
     description: 'Discover larger, higher quality versions of images and alternative crops of the same subject.',
-    icon: <Search className="h-5 w-5 text-indigo-600" />,
+    icon: Search,
   },
   {
     title: 'Instant Source Identification',
     description: 'Get thumbnails, titles, and direct links to verify where an image appears online.',
-    icon: <Sparkles className="h-5 w-5 text-indigo-600" />,
+    icon: Sparkles,
   },
   {
     title: 'Simple Pay-Per-Use',
     description: 'No subscriptions. Credits never expire. Failed searches are automatically refunded.',
-    icon: <Shield className="h-5 w-5 text-indigo-600" />,
+    icon: Shield,
+  },
+];
+
+const heroHighlights = [
+  '50+ Stock Sites',
+  'Higher Resolution',
+  'Direct Source Links',
+  'Desktop & Mobile',
+];
+
+const heroFlow = [
+  {
+    title: 'Upload or paste',
+    description: 'Drop a photo, select a file, or use a public URL.',
+    icon: ImageUp,
+  },
+  {
+    title: 'Search visually',
+    description: 'We compare it against broad web and stock coverage.',
+    icon: Search,
+  },
+  {
+    title: 'Open source links',
+    description: 'Review matches, pages, and higher-quality variants.',
+    icon: ArrowRight,
   },
 ];
 
@@ -85,79 +110,129 @@ export default async function Index(props: IIndexProps) {
   };
 
   return (
-    <div className="space-y-16">
+    <div className="home-shell space-y-20 pb-12 font-[var(--home-font)]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      {/* Search Tool - Main Entry Point */}
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <SearchClient />
-      </section>
-
-      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-12 shadow-sm sm:px-10 md:px-14">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-amber-50" />
-        <div className="relative max-w-3xl">
+      <section className="home-fade-up relative overflow-hidden rounded-[2.5rem] border border-[var(--home-line)] bg-[var(--home-paper)] px-6 py-12 shadow-[0_35px_90px_-55px_rgba(29,29,31,0.55)] sm:px-10 lg:px-14 lg:py-16">
+        <div className="home-orb pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(0,113,227,0.22)_0%,rgba(0,113,227,0)_72%)]" />
+        <div className="pointer-events-none absolute -bottom-20 -left-12 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(42,169,255,0.14)_0%,rgba(42,169,255,0)_68%)]" />
+        <div className="relative grid gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
           <div className="space-y-6">
-            <p className="inline-flex rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold tracking-wide text-white uppercase">
+            <p className="inline-flex rounded-full border border-[var(--home-line)] bg-white/75 px-3 py-1 text-xs font-semibold tracking-[0.2em] text-[var(--home-accent)] uppercase backdrop-blur">
               ReverseImage.io
             </p>
-            <h1 className="text-4xl leading-tight font-semibold text-slate-900 md:text-5xl">
-              Reverse Image Search
+            <h1 className="max-w-3xl text-4xl leading-tight font-semibold text-[var(--home-ink)] sm:text-5xl lg:text-6xl">
+              Reverse
+              {' '}
+              <span className="home-title-accent">Image Search</span>
             </h1>
-            <p className="text-lg text-slate-600">
+            <p className="max-w-2xl text-lg leading-relaxed text-slate-600">
               Search across 50+ stock sites. Find higher resolution versions. Identify sources instantly.
             </p>
             <HomeSignedOutBanner />
-            <p className="text-sm leading-relaxed text-slate-600">
+            <p className="max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
               Upload a photo, drag-and-drop a file, or paste a public image URL. We search the web for visually similar matches, surface thumbnails and source links, and help you track where images appear online.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <HomeHeroCtas prefix={prefix} />
             </div>
-            <div className="flex flex-wrap gap-3 text-sm font-semibold text-slate-600">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                50+ Stock Sites
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Higher Resolution
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Instant Results
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Mobile & Desktop
-              </span>
+            <div className="grid max-w-2xl gap-3 text-sm sm:grid-cols-2">
+              {heroHighlights.map(highlight => (
+                <p
+                  key={highlight}
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--home-line)] bg-white px-4 py-2 font-semibold text-slate-700 shadow-[0_12px_25px_-20px_rgba(15,23,42,0.7)]"
+                >
+                  <Check className="h-4 w-4 text-[var(--home-accent)]" />
+                  {highlight}
+                </p>
+              ))}
             </div>
+          </div>
+
+          <div className="rounded-3xl border border-[var(--home-line)] bg-white/85 p-6 shadow-[0_20px_50px_-35px_rgba(15,23,42,0.65)] backdrop-blur">
+            <p className="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">How It Works</p>
+            <h2 className="mt-3 text-2xl font-semibold text-slate-900">Search flow in under a minute</h2>
+            <ol className="mt-5 space-y-4">
+              {heroFlow.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.title} className="flex gap-4 rounded-2xl border border-slate-200/85 bg-slate-50/80 p-4">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[var(--home-accent)] shadow-sm">
+                      {index + 1}
+                    </span>
+                    <div className="space-y-1">
+                      <p className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900">
+                        <Icon className="h-4 w-4 text-[var(--home-accent)]" />
+                        {item.title}
+                      </p>
+                      <p className="text-sm text-slate-600">{item.description}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+            <Link
+              href={`${prefix}/pricing`}
+              className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800 transition hover:text-slate-950"
+            >
+              View pricing
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Why</p>
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Why use reverse image search?</h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600">
+      <section className="home-fade-up overflow-hidden rounded-[2.2rem] border border-[var(--home-line)] bg-white/85 p-5 shadow-[0_30px_60px_-45px_rgba(15,23,42,0.65)] backdrop-blur-sm sm:p-8">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.18em] text-[var(--home-accent)] uppercase">Search Tool</p>
+            <h2 className="mt-2 text-3xl font-semibold text-[var(--home-ink)] sm:text-4xl">
+              Search by image
+              {' '}
+              <span className="home-title-accent">in seconds</span>
+            </h2>
+          </div>
+          <p className="rounded-full border border-[var(--home-line)] bg-[var(--home-paper)] px-4 py-2 text-sm font-medium text-slate-600">
+            Upload file, drag-and-drop, or image URL
+          </p>
+        </div>
+        <SearchClient />
+      </section>
+
+      <section className="grid gap-5 md:grid-cols-2">
+        <div className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_18px_45px_-38px_rgba(15,23,42,0.7)]">
+          <p className="text-xs font-semibold tracking-[0.16em] text-[var(--home-accent)] uppercase">Why</p>
+          <h2 className="mt-3 text-2xl font-semibold text-[var(--home-ink)]">
+            Why use
+            {' '}
+            <span className="home-title-accent">reverse image search</span>
+            ?
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
             Reverse image search helps you quickly discover where a photo appears online, find visually similar images, and validate sources. It is useful for verifying authenticity, tracking reuse, and locating higher-resolution versions.
           </p>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase">How</p>
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900">How to search by image on desktop and mobile</h2>
-          <div className="mt-4 grid gap-3 text-sm text-slate-700">
-            <div className="rounded-2xl bg-slate-50 p-4">
+        <div className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_18px_45px_-38px_rgba(15,23,42,0.7)]">
+          <p className="text-xs font-semibold tracking-[0.16em] text-[var(--home-accent)] uppercase">How</p>
+          <h2 className="mt-3 text-2xl font-semibold text-[var(--home-ink)]">
+            How to
+            {' '}
+            <span className="home-title-accent">search by image</span>
+            {' '}
+            on desktop and mobile
+          </h2>
+          <div className="mt-5 grid gap-3 text-sm text-slate-700">
+            <div className="rounded-2xl border border-slate-200/80 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Desktop</p>
               <p className="mt-1 text-slate-600">
                 Drag and drop an image, upload a file, or paste a direct image URL, then run the search to see matches.
               </p>
             </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-200/80 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Mobile</p>
               <p className="mt-1 text-slate-600">
                 Open ReverseImage.io in your browser, tap upload, pick a photo from your gallery, and search. Works on iOS and Android.
@@ -167,75 +242,85 @@ export default async function Index(props: IIndexProps) {
         </div>
       </section>
 
-      <section className="grid gap-6 md:grid-cols-3">
-        {features.map(feature => (
-          <div
-            key={feature.title}
-            className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-          >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
-              {feature.icon}
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {features.map((feature) => {
+          const Icon = feature.icon;
+          return (
+            <div
+              key={feature.title}
+              className="home-fade-up flex flex-col gap-4 rounded-2xl border border-[var(--home-line)] bg-white p-6 shadow-[0_16px_30px_-24px_rgba(15,23,42,0.75)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_35px_-22px_rgba(15,23,42,0.7)]"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--home-paper)]">
+                <Icon className="h-5 w-5 text-[var(--home-accent)]" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900">{feature.title}</h3>
+              <p className="text-sm text-slate-600">{feature.description}</p>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">{feature.title}</h3>
-            <p className="text-sm text-slate-600">{feature.description}</p>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
-      <section className="grid gap-6 md:grid-cols-[1.1fr_1fr]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Key features</p>
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Key features of ReverseImage.io</h2>
-          <ol className="mt-4 space-y-3 text-slate-700">
-            <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">1</span>
+      <section className="grid gap-5 md:grid-cols-[1.1fr_1fr]">
+        <div className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_20px_45px_-35px_rgba(15,23,42,0.72)]">
+          <p className="text-xs font-semibold tracking-[0.16em] text-[var(--home-accent)] uppercase">Key Features</p>
+          <h2 className="mt-3 text-2xl font-semibold text-[var(--home-ink)]">
+            Key features of
+            {' '}
+            <span className="home-title-accent">ReverseImage.io</span>
+          </h2>
+          <ol className="mt-5 space-y-3 text-slate-700">
+            <li className="flex gap-3 rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-[var(--home-accent)] shadow-sm">1</span>
               <div>
-                <p className="font-semibold">Upload with ease</p>
+                <p className="font-semibold text-slate-900">Upload with ease</p>
                 <p className="text-sm text-slate-600">Drag and drop, upload a file, or use a public image URL to start searching.</p>
               </div>
             </li>
-            <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">2</span>
+            <li className="flex gap-3 rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-[var(--home-accent)] shadow-sm">2</span>
               <div>
-                <p className="font-semibold">Fast results with clear links</p>
+                <p className="font-semibold text-slate-900">Fast results with clear links</p>
                 <p className="text-sm text-slate-600">We return thumbnails, titles, and source links so you can quickly verify matches.</p>
               </div>
             </li>
-            <li className="flex gap-3 rounded-xl bg-slate-50 p-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">3</span>
+            <li className="flex gap-3 rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-[var(--home-accent)] shadow-sm">3</span>
               <div>
-                <p className="font-semibold">Simple credits, no subscriptions</p>
+                <p className="font-semibold text-slate-900">Simple credits, no subscriptions</p>
                 <p className="text-sm text-slate-600">Each successful search costs 1 credit. Failed searches are auto-refunded. Credits never expire.</p>
               </div>
             </li>
           </ol>
         </div>
-        <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Use cases</p>
-              <h3 className="text-xl font-semibold text-slate-900">Common use cases for photo lookup</h3>
-            </div>
+
+        <div className="home-fade-up space-y-4 rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_20px_45px_-35px_rgba(15,23,42,0.72)]">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.16em] text-[var(--home-accent)] uppercase">Use Cases</p>
+            <h3 className="mt-2 text-2xl font-semibold text-[var(--home-ink)]">
+              Common use cases for
+              {' '}
+              <span className="home-title-accent">photo lookup</span>
+            </h3>
           </div>
           <div className="grid gap-3 text-sm text-slate-700">
-            <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Find the original source</p>
               <p className="mt-1 text-slate-600">Locate pages where an image appears and follow source links.</p>
             </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Check copyright and reuse</p>
               <p className="mt-1 text-slate-600">Spot reposts, duplicates, and potential infringement quickly.</p>
             </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Identify products or people</p>
               <p className="mt-1 text-slate-600">Find similar images, listings, and context around a visual match.</p>
             </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-4">
               <p className="font-semibold text-slate-900">Find a higher-resolution version</p>
               <p className="mt-1 text-slate-600">Discover larger images and alternative crops for the same subject.</p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <Link
               href={`${prefix}/pricing`}
               className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
@@ -248,39 +333,58 @@ export default async function Index(props: IIndexProps) {
         </div>
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="grid gap-5 md:grid-cols-2">
+        <div className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.7)]">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
-              <Shield className="h-5 w-5 text-indigo-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--home-paper)]">
+              <Shield className="h-5 w-5 text-[var(--home-accent)]" />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Secure and private image lookup</h2>
+              <h2 className="text-2xl font-semibold text-[var(--home-ink)]">
+                Secure and private
+                {' '}
+                <span className="home-title-accent">image lookup</span>
+              </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 We process uploads via secure Cloudflare R2 storage to generate a public URL for searching. We do not train models on your uploads or index your private photos.
               </p>
             </div>
           </div>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+
+        <div className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.7)]">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50">
-              <Globe className="h-5 w-5 text-indigo-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--home-paper)]">
+              <Globe className="h-5 w-5 text-[var(--home-accent)]" />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Google-powered visual search</h2>
+              <h2 className="text-2xl font-semibold text-[var(--home-ink)]">
+                Google-powered
+                {' '}
+                <span className="home-title-accent">visual search</span>
+              </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Our reverse photo search uses Google reverse image results (via SerpApi) to provide broad coverage across the web—helping you identify sources, find similar images, and track reuse.
+                Our reverse photo search uses Google reverse image results (via SerpApi) to provide broad coverage across the web, helping you identify sources, find similar images, and track reuse.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-6">
+      <section className="home-fade-up rounded-3xl border border-[var(--home-line)] bg-white p-7 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.7)]">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.16em] text-[var(--home-accent)] uppercase">FAQ</p>
+            <h2 className="mt-2 text-2xl font-semibold text-[var(--home-ink)]">
+              Questions people ask before
+              {' '}
+              <span className="home-title-accent">searching</span>
+            </h2>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
           {faqs.map(item => (
-            <div key={item.q} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+            <div key={item.q} className="rounded-2xl border border-slate-200/85 bg-[var(--home-paper)] p-5">
               <p className="text-base font-semibold text-slate-900">{item.q}</p>
               <p className="mt-2 text-sm text-slate-600">{item.a}</p>
             </div>
@@ -288,15 +392,18 @@ export default async function Index(props: IIndexProps) {
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-16 text-center shadow-lg">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.1),transparent_50%)]" />
+      <section className="home-fade-up relative overflow-hidden rounded-[2.4rem] border border-slate-700/30 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-16 text-center shadow-[0_35px_70px_-40px_rgba(15,23,42,0.9)]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_45%,rgba(56,189,248,0.12),transparent_45%)]" />
         <div className="relative mx-auto max-w-2xl">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
             <Sparkles className="h-4 w-4" />
             Trusted by thousands of users
           </div>
-          <h2 className="text-3xl font-bold text-white md:text-4xl">
-            Ready to Find Your Images?
+          <h2 className="text-3xl font-semibold text-white md:text-4xl">
+            Ready to
+            {' '}
+            <span className="home-title-accent-inverse">Find Your Images</span>
+            ?
           </h2>
           <p className="mt-4 text-lg text-slate-300">
             Join thousands of photographers, designers, and content creators using ReverseImage.io to track image usage and find higher quality versions.

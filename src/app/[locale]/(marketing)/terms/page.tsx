@@ -55,28 +55,32 @@ export default async function TermsPage(props: TermsPageProps) {
 
   const getColorClasses = (color: string) => {
     const colors = {
-      indigo: 'from-indigo-100 to-indigo-50 text-indigo-600',
-      purple: 'from-purple-100 to-purple-50 text-purple-600',
-      emerald: 'from-emerald-100 to-emerald-50 text-emerald-600',
-      amber: 'from-amber-100 to-amber-50 text-amber-600',
-      slate: 'from-slate-100 to-slate-50 text-slate-600',
+      indigo: 'bg-sky-100 text-[var(--ui-accent)]',
+      purple: 'bg-sky-100 text-[var(--ui-accent)]',
+      emerald: 'bg-sky-100 text-[var(--ui-accent)]',
+      amber: 'bg-sky-100 text-[var(--ui-accent)]',
+      slate: 'bg-sky-100 text-[var(--ui-accent)]',
     };
     return colors[color as keyof typeof colors] || colors.indigo;
   };
 
   return (
-    <div className="space-y-8">
+    <div className="ui-page">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50 p-6 shadow-lg sm:rounded-3xl sm:p-8">
-        <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 opacity-30 blur-3xl" />
+      <div className="ui-panel-hero relative overflow-hidden bg-gradient-to-br from-white via-[var(--ui-soft)] to-sky-50 p-6 sm:p-8">
+        <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-gradient-to-br from-sky-200 to-blue-200 opacity-30 blur-3xl" />
         <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 shadow-lg sm:h-16 sm:w-16 sm:rounded-2xl">
-            <Shield className="h-6 w-6 text-white sm:h-8 sm:w-8" />
+          <div className="ui-icon-box ui-icon-box-lg shrink-0 bg-[var(--ui-accent)] text-white shadow-lg">
+            <Shield className="h-6 w-6 sm:h-8 sm:w-8" />
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold tracking-wider text-indigo-600 uppercase">Legal Terms</p>
-            <h1 className="mt-1 text-3xl font-bold text-slate-900 sm:text-4xl">Terms of Service</h1>
-            <p className="mt-2 text-base text-slate-600 sm:mt-3 sm:text-lg">
+            <p className="text-xs font-semibold tracking-wider text-[var(--ui-accent)] uppercase">Legal Terms</p>
+            <h1 className="mt-1 text-3xl font-bold text-[var(--ui-ink)] sm:text-4xl">
+              Terms of
+              {' '}
+              <span className="ui-title-accent">Service</span>
+            </h1>
+            <p className="mt-2 text-base text-[var(--ui-muted)] sm:mt-3 sm:text-lg">
               Please review these terms carefully. By using ReverseImage.io you agree to the rules below.
             </p>
           </div>
@@ -90,15 +94,15 @@ export default async function TermsPage(props: TermsPageProps) {
           return (
             <div
               key={term.title}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md active:translate-y-0 sm:rounded-3xl sm:p-6"
+              className="ui-panel group p-5 transition hover:-translate-y-1 hover:shadow-md active:translate-y-0 sm:p-6"
             >
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br sm:h-12 sm:w-12 sm:rounded-xl ${getColorClasses(term.color)}`}>
+                <div className={`ui-icon-box ui-icon-box-sm shrink-0 ${getColorClasses(term.color)}`}>
                   <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-lg font-bold text-slate-900 sm:text-xl">{term.title}</h2>
-                  <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:mt-2 sm:text-sm">{term.body}</p>
+                  <h2 className="text-lg font-bold text-[var(--ui-ink)] sm:text-xl">{term.title}</h2>
+                  <p className="mt-1.5 text-xs leading-relaxed text-[var(--ui-muted)] sm:mt-2 sm:text-sm">{term.body}</p>
                 </div>
               </div>
             </div>
@@ -107,18 +111,18 @@ export default async function TermsPage(props: TermsPageProps) {
       </div>
 
       {/* Refund Policy Section */}
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm sm:rounded-3xl sm:p-8">
+      <div className="ui-panel-soft p-6 sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-100 to-teal-100 sm:h-12 sm:w-12 sm:rounded-xl">
-            <RefreshCw className="h-5 w-5 text-emerald-600 sm:h-6 sm:w-6" />
+          <div className="ui-icon-box ui-icon-box-sm shrink-0">
+            <RefreshCw className="h-5 w-5 text-[var(--ui-accent)] sm:h-6 sm:w-6" />
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold tracking-wider text-emerald-600 uppercase">Fair Policy</p>
-            <h2 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">Refund Policy</h2>
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:mt-2 sm:text-sm">
+            <p className="text-xs font-semibold tracking-wider text-[var(--ui-accent)] uppercase">Fair Policy</p>
+            <h2 className="mt-1 text-xl font-bold text-[var(--ui-ink)] sm:text-2xl">Refund Policy</h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--ui-muted)] sm:mt-2 sm:text-sm">
               This policy applies to credit purchases and usage. View the complete policy on the dedicated page:
               {' '}
-              <Link className="font-semibold text-indigo-600 hover:underline active:underline" href={refundsHref}>
+              <Link className="font-semibold text-[var(--ui-accent)] hover:underline active:underline" href={refundsHref}>
                 Refund Policy
               </Link>
               .

@@ -222,81 +222,81 @@ export const AccountClient = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="ui-page">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase">Credits</p>
+        <div className="ui-panel p-6">
+          <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Credits</p>
           <div className="mt-2 flex items-end gap-3">
-            <p className="text-5xl font-bold text-slate-900">{credits ?? 0}</p>
-            <span className="text-sm font-semibold text-slate-600">available</span>
+            <p className="text-5xl font-bold text-[var(--ui-ink)]">{credits ?? 0}</p>
+            <span className="text-sm font-semibold text-[var(--ui-muted)]">available</span>
           </div>
-          <p className="mt-2 text-sm text-slate-600">Use 1 credit per search. Credits never expire.</p>
+          <p className="mt-2 text-sm text-[var(--ui-muted)]">Use 1 credit per search. Credits never expire.</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
               href={`${localePrefix}/pricing`}
-              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
+              className="ui-btn-primary"
             >
               Buy more credits
             </Link>
             <Link
               href={`${localePrefix || '/'}`}
-              className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-sm"
+              className="ui-btn-secondary"
             >
               New search
             </Link>
           </div>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="ui-panel p-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Account</p>
-              <p className="text-lg font-semibold text-slate-900">Manage your session</p>
-              <p className="text-sm text-slate-600">Signed in with Clerk. Secure payments via Stripe.</p>
+              <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Account</p>
+              <p className="text-lg font-semibold text-[var(--ui-ink)]">Manage your session</p>
+              <p className="text-sm text-[var(--ui-muted)]">Signed in with Clerk. Secure payments via Stripe.</p>
             </div>
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: 'h-12 w-12 border border-slate-200 shadow-sm',
+                  avatarBox: 'h-12 w-12 border border-[var(--ui-line)] shadow-sm',
                 },
               }}
             />
           </div>
-          <div className="mt-4 space-y-2 text-sm text-slate-700">
-            <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-3">
-              <Wallet className="h-4 w-4 text-indigo-600" />
+          <div className="mt-4 space-y-2 text-sm text-[var(--ui-muted)]">
+            <div className="flex items-center gap-2 rounded-xl bg-[var(--ui-soft)] p-3">
+              <Wallet className="h-4 w-4 text-[var(--ui-accent)]" />
               <span>Credits are tied to your account. Logging out keeps your balance safe.</span>
             </div>
-            <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-3">
-              <Receipt className="h-4 w-4 text-indigo-600" />
+            <div className="flex items-center gap-2 rounded-xl bg-[var(--ui-soft)] p-3">
+              <Receipt className="h-4 w-4 text-[var(--ui-accent)]" />
               <span>Every payment creates a transaction log with amount, currency, and credits added.</span>
             </div>
           </div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-sm">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--ui-accent)] px-4 py-2 text-xs font-semibold text-white shadow-sm">
             <LogOut className="h-4 w-4" />
             Use the avatar menu to sign out
           </div>
         </div>
       </div>
 
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ui-panel p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase">History</p>
-            <h2 className="text-xl font-semibold text-slate-900">Recent recharges</h2>
+            <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">History</p>
+            <h2 className="text-xl font-semibold text-[var(--ui-ink)]">Recent recharges</h2>
           </div>
-          <Link href={`${localePrefix}/pricing`} className="text-sm font-semibold text-indigo-600 hover:underline">
+          <Link href={`${localePrefix}/pricing`} className="text-sm font-semibold text-[var(--ui-accent)] hover:underline">
             Recharge credits
           </Link>
         </div>
         {loading && (
           <div className="mt-4 grid gap-3">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="animate-pulse rounded-xl bg-slate-100 p-4" />
+            {['history-skeleton-a', 'history-skeleton-b', 'history-skeleton-c'].map(key => (
+              <div key={key} className="animate-pulse rounded-xl bg-[var(--ui-soft)] p-4" />
             ))}
           </div>
         )}
         {!loading && transactions.length === 0 && (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-700">
+          <div className="mt-4 rounded-xl border border-[var(--ui-line)] bg-[var(--ui-soft)] px-4 py-6 text-sm text-[var(--ui-muted)]">
             No transactions yet. Start with your free credits or purchase a pack to see them here.
           </div>
         )}
@@ -305,7 +305,7 @@ export const AccountClient = () => {
             {transactions.map(tx => (
               <div key={tx.id} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-[var(--ui-ink)]">
                     {formatCurrency(tx.amount, tx.currency)}
                     {' '}
                     · +
@@ -313,9 +313,9 @@ export const AccountClient = () => {
                     {' '}
                     credits
                   </p>
-                  <p className="text-xs text-slate-500">{tx.status}</p>
+                  <p className="text-xs text-[var(--ui-muted)]">{tx.status}</p>
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-[var(--ui-muted)]">
                   {tx.createdAt ? createdAtFormatter.format(new Date(tx.createdAt)) : '—'}
                 </div>
               </div>
@@ -325,14 +325,14 @@ export const AccountClient = () => {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="ui-panel p-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Daily check-in</p>
-              <h2 className="text-lg font-semibold text-slate-900">Earn +1 credit every day</h2>
-              <p className="mt-1 text-sm text-slate-600">Check in once per day. Credits never expire.</p>
+              <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Daily check-in</p>
+              <h2 className="text-lg font-semibold text-[var(--ui-ink)]">Earn +1 credit every day</h2>
+              <p className="mt-1 text-sm text-[var(--ui-muted)]">Check in once per day. Credits never expire.</p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+            <div className="ui-icon-box ui-icon-box-sm rounded-full text-[var(--ui-accent)]">
               <Gift className="h-5 w-5" />
             </div>
           </div>
@@ -341,7 +341,7 @@ export const AccountClient = () => {
               type="button"
               onClick={handleCheckIn}
               disabled={checkinLoading || checkedInToday}
-              className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+              className="ui-btn-primary ui-btn-xs"
             >
               {checkinLoading ? 'Checking...' : checkedInToday ? 'Checked in today' : 'Check in +1 credit'}
             </button>
@@ -352,7 +352,7 @@ export const AccountClient = () => {
               </span>
             )}
             {nextResetAt && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-[var(--ui-muted)]">
                 Resets at
                 {' '}
                 {resetAtFormatter.format(new Date(nextResetAt))}
@@ -367,14 +367,14 @@ export const AccountClient = () => {
           )}
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="ui-panel p-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Invite friends</p>
-              <h2 className="text-lg font-semibold text-slate-900">Get 20 credits per signup</h2>
-              <p className="mt-1 text-sm text-slate-600">Share your link. Your friend signs up, you earn.</p>
+              <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Invite friends</p>
+              <h2 className="text-lg font-semibold text-[var(--ui-ink)]">Get 20 credits per signup</h2>
+              <p className="mt-1 text-sm text-[var(--ui-muted)]">Share your link. Your friend signs up, you earn.</p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+            <div className="ui-icon-box ui-icon-box-sm rounded-full text-[var(--ui-accent)]">
               <Share2 className="h-5 w-5" />
             </div>
           </div>
@@ -383,26 +383,26 @@ export const AccountClient = () => {
               <input
                 value={inviteLoading ? 'Loading invite link...' : inviteUrl}
                 readOnly
-                className="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-700"
+                className="w-full rounded-full border border-[var(--ui-line)] bg-[var(--ui-soft)] px-4 py-2 text-xs font-medium text-[var(--ui-muted)]"
               />
             </div>
             <button
               type="button"
               onClick={handleCopyInvite}
               disabled={!inviteUrl || inviteLoading}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+              className="ui-btn-secondary ui-btn-xs"
             >
               <Copy className="h-4 w-4" />
               Copy link
             </button>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+            <span className="rounded-full bg-[var(--ui-soft)] px-3 py-1 text-xs font-semibold text-[var(--ui-muted)]">
               Invited
               {' '}
               {inviteStats.invitedUsers}
             </span>
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+            <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-[var(--ui-accent)]">
               Earned
               {' '}
               {inviteStats.creditsEarned}
@@ -411,7 +411,7 @@ export const AccountClient = () => {
             </span>
           </div>
           {!inviteLoading && inviteRecent.length > 0 && (
-            <div className="mt-4 space-y-2 text-xs text-slate-600">
+            <div className="mt-4 space-y-2 text-xs text-[var(--ui-muted)]">
               {inviteRecent.map(item => (
                 <div key={item.inviteeUserId} className="flex items-center justify-between">
                   <span>{item.inviteeEmailMasked ?? 'New member'}</span>

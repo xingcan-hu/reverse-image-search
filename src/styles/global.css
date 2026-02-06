@@ -1,3 +1,322 @@
 @layer theme, base, clerk, components, utilities; /* Ensure Clerk is compatible with Tailwind CSS v4 */
 
 @import 'tailwindcss';
+
+@layer base {
+  :root {
+    --ui-accent: #0071e3;
+    --ui-accent-2: #2aa9ff;
+    --ui-bg: #f5f5f7;
+    --ui-ink: #1d1d1f;
+    --ui-muted: #6e6e73;
+    --ui-surface: #ffffff;
+    --ui-soft: #f2f2f4;
+    --ui-line: rgba(29, 29, 31, 0.13);
+    --home-accent: #0071e3;
+    --home-accent-2: #2aa9ff;
+    --home-font: 'Avenir Next', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
+    --home-ink: #1d1d1f;
+    --home-paper: #f5f5f7;
+    --home-line: rgba(29, 29, 31, 0.13);
+  }
+}
+
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-orb-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-8px, 12px, 0) scale(1.04);
+  }
+}
+
+.home-shell {
+  --ui-accent: #0071e3;
+  --ui-accent-2: #2aa9ff;
+  --ui-bg: #f5f5f7;
+  --ui-ink: #1d1d1f;
+  --ui-muted: #6e6e73;
+  --ui-surface: #ffffff;
+  --ui-soft: #f2f2f4;
+  --ui-line: rgba(29, 29, 31, 0.13);
+  --home-accent: #0071e3;
+  --home-accent-2: #2aa9ff;
+  --home-font: 'Avenir Next', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --home-ink: #1d1d1f;
+  --home-paper: #f5f5f7;
+  --home-line: rgba(29, 29, 31, 0.13);
+}
+
+.ui-theme {
+  --ui-accent: #0071e3;
+  --ui-accent-2: #2aa9ff;
+  --ui-bg: #f5f5f7;
+  --ui-ink: #1d1d1f;
+  --ui-muted: #6e6e73;
+  --ui-surface: #ffffff;
+  --ui-soft: #f2f2f4;
+  --ui-line: rgba(29, 29, 31, 0.13);
+  font-family: var(--home-font);
+}
+
+.ui-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ui-title-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ui-title-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ui-panel {
+  border: 1px solid var(--ui-line);
+  border-radius: 1.5rem;
+  background: var(--ui-surface);
+  box-shadow: 0 18px 40px -34px rgba(29, 29, 31, 0.58);
+}
+
+.ui-panel-lg {
+  border-radius: 2rem;
+}
+
+.ui-panel-hero {
+  border: 1px solid var(--ui-line);
+  border-radius: 2rem;
+  box-shadow: 0 28px 55px -45px rgba(29, 29, 31, 0.75);
+}
+
+.ui-panel-soft {
+  border: 1px solid var(--ui-line);
+  border-radius: 1.5rem;
+  background: linear-gradient(140deg, #ffffff 0%, var(--ui-soft) 100%);
+  box-shadow: 0 18px 40px -34px rgba(29, 29, 31, 0.58);
+}
+
+.ui-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ui-accent);
+}
+
+.ui-heading-lg {
+  font-size: clamp(1.8rem, 4.2vw, 3rem);
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--ui-ink);
+}
+
+.ui-heading-md {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  line-height: 1.18;
+  font-weight: 650;
+  color: var(--ui-ink);
+}
+
+.ui-heading-sm {
+  font-size: 1.1rem;
+  line-height: 1.3;
+  font-weight: 650;
+  color: var(--ui-ink);
+}
+
+.ui-body {
+  color: var(--ui-muted);
+  line-height: 1.6;
+}
+
+.ui-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.875rem;
+  background: #e0f2fe;
+  color: var(--ui-accent);
+}
+
+.ui-icon-box svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.ui-icon-box-sm {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+.ui-icon-box-lg {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.9rem;
+}
+
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid var(--ui-line);
+  background: var(--ui-soft);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.74rem;
+  font-weight: 650;
+  color: var(--ui-muted);
+}
+
+.ui-btn-primary,
+.ui-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.55rem;
+  border-radius: 9999px;
+  padding: 0.5rem 1.05rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.ui-btn-primary {
+  border: 1px solid transparent;
+  background: var(--ui-accent);
+  color: #ffffff;
+  box-shadow: 0 12px 25px -18px rgba(0, 113, 227, 0.7);
+}
+
+.ui-btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+  box-shadow: 0 16px 28px -18px rgba(0, 113, 227, 0.75);
+}
+
+.ui-btn-secondary {
+  border: 1px solid var(--ui-line);
+  background: #ffffff;
+  color: var(--ui-ink);
+  box-shadow: 0 12px 24px -22px rgba(29, 29, 31, 0.6);
+}
+
+.ui-btn-secondary:hover {
+  transform: translateY(-1px);
+  border-color: #c5c5ca;
+  box-shadow: 0 16px 28px -22px rgba(29, 29, 31, 0.62);
+}
+
+.ui-btn-primary:disabled,
+.ui-btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+.ui-btn-xs {
+  min-height: 2.1rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.ui-btn-lg {
+  min-height: 2.9rem;
+  padding: 0.65rem 1.45rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.ui-btn-block {
+  width: 100%;
+}
+
+.home-fade-up {
+  animation: home-fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-orb {
+  animation: home-orb-drift 10s ease-in-out infinite;
+}
+
+.home-title-accent {
+  color: var(--home-accent);
+}
+
+.home-title-accent-inverse {
+  color: #9ad7ff;
+}
+
+.ui-title-accent {
+  color: var(--ui-accent);
+}
+
+.ui-title-accent-inverse {
+  color: #9ad7ff;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .home-title-accent {
+    background-image: linear-gradient(100deg, var(--home-accent) 0%, var(--home-accent-2) 78%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .home-title-accent-inverse {
+    background-image: linear-gradient(100deg, #8dcfff 0%, #d6ecff 88%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ui-title-accent {
+    background-image: linear-gradient(100deg, var(--ui-accent) 0%, var(--ui-accent-2) 78%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ui-title-accent-inverse {
+    background-image: linear-gradient(100deg, #8dcfff 0%, #d6ecff 88%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-fade-up,
+  .home-orb {
+    animation: none;
+  }
+}

@@ -7,13 +7,13 @@ import Link from '@/components/AppLink';
 export const HomeSignedOutBanner = () => {
   return (
     <SignedOut>
-      <div className="rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-5 py-4">
+      <div className="ui-panel border-sky-200/80 bg-white/80 p-4 backdrop-blur sm:p-5">
         <p className="text-base font-semibold text-slate-900">
-          <Sparkles className="mb-1 inline h-5 w-5 text-indigo-600" />
+          <Sparkles className="mb-1 inline h-5 w-5 text-sky-600" />
           {' '}
           Get 3 Free Searches - No Credit Card Required
         </p>
-        <p className="mt-2 text-sm text-slate-700">
+        <p className="mt-2 text-sm leading-relaxed text-slate-700">
           Try our reverse image search for free. Find similar images, track sources, and discover higher resolution versions across the web.
         </p>
       </div>
@@ -27,14 +27,14 @@ export const HomeHeroCtas = ({ prefix }: { prefix: string }) => {
       <SignedOut>
         <Link
           href={`${prefix}/sign-up`}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
+          className="ui-btn-primary"
         >
           Try free (3 credits)
           <ArrowRight className="h-4 w-4" />
         </Link>
         <Link
           href={`${prefix}/pricing`}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+          className="ui-btn-secondary"
         >
           View pricing
         </Link>
@@ -42,7 +42,7 @@ export const HomeHeroCtas = ({ prefix }: { prefix: string }) => {
       <SignedIn>
         <Link
           href={`${prefix}/account`}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+          className="ui-btn-secondary"
         >
           View balance
         </Link>
@@ -56,7 +56,7 @@ export const HomeUseCasesSignedOutCta = ({ prefix }: { prefix: string }) => {
     <SignedOut>
       <Link
         href={`${prefix}/sign-up`}
-        className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-md"
+        className="ui-btn-primary"
       >
         Get started
         <ArrowRight className="h-4 w-4" />
@@ -73,7 +73,7 @@ export const HomeBottomCta = ({ prefix }: { prefix: string }) => {
       <SignedOut>
         <Link
           href={`${prefix}/sign-up`}
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+          className="ui-btn-primary ui-btn-lg mt-8"
         >
           Get Started with 3 Free Credits
           <ArrowRight className="h-5 w-5" />
@@ -85,7 +85,7 @@ export const HomeBottomCta = ({ prefix }: { prefix: string }) => {
       <SignedIn>
         <Link
           href={signedInHref}
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-xl transition hover:-translate-y-1 hover:shadow-2xl"
+          className="ui-btn-secondary ui-btn-lg mt-8"
         >
           Start Searching Now
           <ArrowRight className="h-5 w-5" />

@@ -17,59 +17,6 @@ import { cn } from '@/utils/Cn';
 
 type SearchState = 'idle' | 'searching' | 'success' | 'error';
 
-// Demo examples for non-authenticated users
-const DEMO_EXAMPLES = [
-  {
-    id: 'demo-1',
-    title: 'Mountain Landscape',
-    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-    description: 'Search across 50+ sources',
-  },
-  {
-    id: 'demo-2',
-    title: 'City Architecture',
-    thumbnail: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400',
-    description: 'Find higher resolution',
-  },
-  {
-    id: 'demo-3',
-    title: 'Nature Photography',
-    thumbnail: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
-    description: 'Identify sources instantly',
-  },
-];
-
-const DEMO_RESULTS: ImageSearchResult[] = [
-  {
-    id: 'result-1',
-    title: 'Similar Image on Getty Images - High Resolution Available',
-    link: 'https://www.gettyimages.com',
-    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300',
-    source: 'Getty Images',
-  },
-  {
-    id: 'result-2',
-    title: 'Mountain Photography Collection - Stock Photo',
-    link: 'https://www.shutterstock.com',
-    thumbnail: 'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=300',
-    source: 'Shutterstock',
-  },
-  {
-    id: 'result-3',
-    title: 'Landscape Photography Portfolio',
-    link: 'https://unsplash.com',
-    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300',
-    source: 'Unsplash',
-  },
-  {
-    id: 'result-4',
-    title: 'Nature Wallpaper 4K - Free Download',
-    link: 'https://www.pexels.com',
-    thumbnail: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300',
-    source: 'Pexels',
-  },
-];
-
 export const SearchClient = () => {
   const [status, setStatus] = useState<SearchState>('idle');
   const [results, setResults] = useState<ImageSearchResult[]>([]);
@@ -312,163 +259,70 @@ export const SearchClient = () => {
     return 'Drop an image to begin';
   }, [isSearching, status]);
 
-  const handleDemoClick = useCallback((example: typeof DEMO_EXAMPLES[0]) => {
-    setPreviewUrl(example.thumbnail);
-    setStatus('searching');
-    setResults([]);
-
-    // Simulate search delay
-    setTimeout(() => {
-      setResults(DEMO_RESULTS);
-      setStatus('success');
-      toast.success('Demo search complete', {
-        description: 'Sign up to search your own images and get 3 free credits!',
-      });
-    }, 1500);
-  }, []);
-
-  // For non-authenticated users, show centered hero layout
+  // For non-authenticated users, show compact onboarding panel
   if (!isSignedIn) {
     return (
       <>
         <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
-        <div className="space-y-8">
-          {/* Hero CTA */}
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="space-y-5">
+            <p className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700">
               <Sparkles className="h-4 w-4" />
-              Get 3 Free Searches · No Credit Card Required
-            </div>
-            <h2 className="mt-6 text-4xl font-bold text-slate-900 md:text-5xl">
-              Find Similar Images Instantly
-            </h2>
-            <p className="mt-4 text-lg text-slate-600">
-              Search across 50+ stock sites. Find higher resolution versions. Identify sources in seconds.
+              3 free searches for new accounts
             </p>
-            <button
-              type="button"
-              onClick={() => {
-                const signUpUrl = `${apiPrefix}/sign-up`;
-                router.push(signUpUrl);
-              }}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl"
-            >
-              <Zap className="h-5 w-5" />
-              Start Searching - Free
-              <ArrowRight className="h-5 w-5" />
-            </button>
+            <h3 className="max-w-xl text-3xl leading-tight font-semibold text-slate-900 sm:text-4xl">
+              Create an account and run your first reverse image search in seconds
+            </h3>
+            <p className="max-w-xl text-base leading-relaxed text-slate-600">
+              We support upload, drag-and-drop, and public image URLs. After sign-up, you can start searching immediately with free credits.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const signUpUrl = `${apiPrefix}/sign-up`;
+                  router.push(signUpUrl);
+                }}
+                className="ui-btn-primary ui-btn-lg"
+              >
+                <Zap className="h-4 w-4" />
+                Create free account
+                <ArrowRight className="h-4 w-4" />
+              </button>
+              <Link
+                href={`${apiPrefix}/pricing`}
+                className="ui-btn-secondary ui-btn-lg"
+              >
+                View pricing
+              </Link>
+            </div>
+            <p className="text-xs font-medium text-slate-500">
+              No credit card required. Credits never expire.
+            </p>
           </div>
 
-          {/* Demo Examples */}
-          <div className="space-y-4">
-            <div className="text-center">
-              <p className="text-sm font-semibold text-slate-500 uppercase">Try a Demo</p>
-              <h3 className="mt-1 text-xl font-semibold text-slate-900">
-                Click an example to see how it works
-              </h3>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {DEMO_EXAMPLES.map(example => (
-                <button
-                  key={example.id}
-                  type="button"
-                  onClick={() => handleDemoClick(example)}
-                  disabled={isSearching}
-                  className="group relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-lg disabled:opacity-60"
-                >
-                  <div className="aspect-[4/3] overflow-hidden bg-slate-100">
-                    <img
-                      src={example.thumbnail}
-                      alt={example.title}
-                      className="h-full w-full object-cover transition group-hover:scale-105"
-                    />
+          <div className="ui-panel-soft p-5">
+            <div className="ui-panel p-5 shadow-sm">
+              <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
+                <Search className="h-3.5 w-3.5" />
+                Search preview
+              </p>
+              <div className="mt-4 flex h-44 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
+                <div className="text-center">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white">
+                    <Search className="h-6 w-6" />
                   </div>
-                  <div className="p-4 text-left">
-                    <p className="font-semibold text-slate-900">{example.title}</p>
-                    <p className="mt-1 text-sm text-slate-600">{example.description}</p>
-                    <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-indigo-600">
-                      Try this example
-                      <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Results Section */}
-          {(isSearching || status === 'success') && (
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase">Demo Results</p>
-                  <h2 className="text-2xl font-semibold text-slate-900">Visual Matches</h2>
-                </div>
-                <div className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-                  {status === 'success' ? `${results.length} matches found` : 'Searching...'}
+                  <p className="mt-3 text-sm font-semibold text-slate-900">Upload an image after sign in</p>
+                  <p className="mt-1 text-xs text-slate-500">JPG, PNG, WEBP · up to 5MB</p>
                 </div>
               </div>
-
-              {isSearching && (
-                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="animate-pulse rounded-xl bg-slate-100 py-24" />
-                  ))}
-                </div>
-              )}
-
-              {status === 'success' && results.length > 0 && (
-                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  {results.map(result => (
-                    <div key={result.id} className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                      <div className="aspect-[4/3] overflow-hidden bg-slate-100">
-                        {result.thumbnail && (
-                          <img
-                            src={result.thumbnail}
-                            alt={result.title || 'Search match'}
-                            className="h-full w-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-2 p-3">
-                        <div className="line-clamp-2 text-sm font-semibold text-slate-800">
-                          {result.title || 'Match'}
-                        </div>
-                        {result.source && (
-                          <span className="inline-block rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm">
-                            {result.source}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {status === 'success' && (
-                <div className="mt-6 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-6 text-center">
-                  <p className="text-lg font-semibold text-slate-900">
-                    Ready to search your own images?
-                  </p>
-                  <p className="mt-2 text-sm text-slate-600">
-                    Sign up now and get 3 free search credits. No credit card required.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const signUpUrl = `${apiPrefix}/sign-up`;
-                      router.push(signUpUrl);
-                    }}
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl"
-                  >
-                    <Zap className="h-4 w-4" />
-                    Get Started Free
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
+              <div className="mt-4 grid gap-2 text-xs text-slate-600">
+                <p>• Search across 50+ image sources</p>
+                <p>• Find matching pages and thumbnails</p>
+                <p>• Discover higher-resolution versions</p>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </>
     );
@@ -481,13 +335,13 @@ export const SearchClient = () => {
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">
           {/* Upload Section */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="ui-panel p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-indigo-600 uppercase">Powered Search</p>
-                <h1 className="text-2xl font-semibold text-slate-900">Find Similar Images</h1>
+                <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Powered Search</p>
+                <h2 className="text-2xl font-semibold text-slate-900">Find Similar Images</h2>
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+              <div className="flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                 <Sparkles className="h-4 w-4" />
                 {credits ?? 0}
                 {' '}
@@ -505,13 +359,13 @@ export const SearchClient = () => {
                   <button
                     type="button"
                     onClick={() => setLowBalanceOpen(true)}
-                    className="inline-flex items-center justify-center rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-600 hover:shadow-md"
+                    className="ui-btn-primary ui-btn-xs"
                   >
                     Get free credits
                   </button>
                   <Link
                     href={locale === routing.defaultLocale ? '/pricing' : `/${locale}/pricing`}
-                    className="inline-flex items-center justify-center rounded-full border border-amber-200 px-4 py-2 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100"
+                    className="ui-btn-secondary ui-btn-xs"
                   >
                     Buy credits
                   </Link>
@@ -524,15 +378,15 @@ export const SearchClient = () => {
               className={cn(
                 'relative mt-6 flex h-72 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition',
                 isDragActive
-                  ? 'border-indigo-400 bg-gradient-to-br from-indigo-50 to-purple-50'
-                  : 'border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 hover:border-indigo-300 hover:from-indigo-50/30 hover:to-purple-50/30',
+                  ? 'border-sky-400 bg-gradient-to-br from-sky-50 to-white'
+                  : 'border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 hover:border-sky-300 hover:from-sky-50/50 hover:to-white',
               )}
             >
               <input {...getInputProps()} />
               <div className={cn(
                 'flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition',
                 isDragActive
-                  ? 'bg-gradient-to-br from-indigo-500 to-purple-500'
+                  ? 'bg-[var(--ui-accent)]'
                   : 'bg-gradient-to-br from-slate-900 to-slate-700',
               )}
               >
@@ -564,7 +418,7 @@ export const SearchClient = () => {
                   placeholder="https://example.com/image.jpg"
                   inputMode="url"
                   autoComplete="off"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition outline-none focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
                   disabled={isSearching}
                 />
                 <button
@@ -572,7 +426,7 @@ export const SearchClient = () => {
                   onClick={() => void handleSearchUrl()}
                   disabled={isSearching || !imageUrlInput.trim()}
                   className={cn(
-                    'inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-slate-700 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl',
+                    'ui-btn-primary ui-btn-lg shrink-0',
                     (isSearching || !imageUrlInput.trim()) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-lg',
                   )}
                 >
@@ -606,10 +460,10 @@ export const SearchClient = () => {
           </div>
 
           {/* Features Info */}
-          <div className="grid gap-3 rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm md:grid-cols-3">
+          <div className="ui-panel-soft grid gap-3 p-6 md:grid-cols-3">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
-                <Globe className="h-5 w-5 text-indigo-600" />
+              <div className="ui-icon-box ui-icon-box-sm shrink-0">
+                <Globe className="h-5 w-5 text-[var(--ui-accent)]" />
               </div>
               <div>
                 <p className="font-semibold text-slate-900">50+ Sources</p>
@@ -617,8 +471,8 @@ export const SearchClient = () => {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100">
-                <Sparkles className="h-5 w-5 text-purple-600" />
+              <div className="ui-icon-box ui-icon-box-sm shrink-0">
+                <Sparkles className="h-5 w-5 text-[var(--ui-accent)]" />
               </div>
               <div>
                 <p className="font-semibold text-slate-900">Higher Resolution</p>
@@ -626,8 +480,8 @@ export const SearchClient = () => {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100">
-                <ShieldCheck className="h-5 w-5 text-emerald-600" />
+              <div className="ui-icon-box ui-icon-box-sm shrink-0 bg-sky-100 text-[var(--ui-accent)]">
+                <ShieldCheck className="h-5 w-5 text-[var(--ui-accent)]" />
               </div>
               <div>
                 <p className="font-semibold text-slate-900">Instant Results</p>
@@ -638,21 +492,21 @@ export const SearchClient = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="ui-panel p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-indigo-600 uppercase">Search Results</p>
+                <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Search Results</p>
                 <h2 className="text-2xl font-semibold text-slate-900">Visual Matches</h2>
               </div>
               {status === 'success' && results.length > 0 && (
-                <div className="rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+                <div className="rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                   {results.length}
                   {' '}
                   found
                 </div>
               )}
               {isSearching && (
-                <div className="flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+                <div className="flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Searching...
                 </div>
@@ -661,8 +515,8 @@ export const SearchClient = () => {
 
             {isSearching && (
               <div className="mt-6 grid grid-cols-1 gap-4">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                {['skeleton-a', 'skeleton-b', 'skeleton-c'].map(key => (
+                  <div key={key} className="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
                     <div className="h-20 w-20 shrink-0 animate-pulse rounded-lg bg-slate-200" />
                     <div className="flex-1 space-y-2">
                       <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200" />
@@ -690,7 +544,7 @@ export const SearchClient = () => {
                     href={result.link || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex gap-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
+                    className="group flex gap-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-md"
                   >
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                       {result.thumbnail
@@ -710,7 +564,7 @@ export const SearchClient = () => {
                     </div>
                     <div className="flex-1 space-y-1 overflow-hidden">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="line-clamp-2 text-sm font-semibold text-slate-900 group-hover:text-indigo-600">
+                        <p className="line-clamp-2 text-sm font-semibold text-slate-900 group-hover:text-[var(--ui-accent)]">
                           {result.title || 'Match'}
                         </p>
                         {result.source && (
@@ -720,13 +574,13 @@ export const SearchClient = () => {
                         )}
                       </div>
                       {result.link && (
-                        <p className="truncate text-xs text-indigo-600 group-hover:underline">
+                        <p className="truncate text-xs text-[var(--ui-accent)] group-hover:underline">
                           {result.link}
                         </p>
                       )}
                     </div>
                     <div className="flex shrink-0 items-center">
-                      <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-indigo-600" />
+                      <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-[var(--ui-accent)]" />
                     </div>
                   </a>
                 ))}
@@ -734,9 +588,9 @@ export const SearchClient = () => {
             )}
 
             {status === 'idle' && results.length === 0 && (
-              <div className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-purple-100">
-                  <Search className="h-8 w-8 text-indigo-600" />
+              <div className="ui-panel-soft mt-6 space-y-4 p-6 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sky-100">
+                  <Search className="h-8 w-8 text-[var(--ui-accent)]" />
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900">Ready to Search</p>
@@ -766,7 +620,7 @@ export const SearchClient = () => {
 
           {/* Quick Tips */}
           {status === 'idle' && results.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="ui-panel p-5">
               <p className="text-sm font-semibold text-slate-900">💡 Pro Tips</p>
               <ul className="mt-3 space-y-2 text-xs text-slate-600">
                 <li className="flex gap-2">

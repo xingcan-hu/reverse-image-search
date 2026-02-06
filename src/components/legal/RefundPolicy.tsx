@@ -76,7 +76,7 @@ export const RefundPolicy = ({
             <Fragment key="contact-email">
               Contact us at
               {' '}
-              <a className="font-semibold text-indigo-600 hover:underline" href={`mailto:${supportEmail}`}>
+              <a className="font-semibold text-[var(--ui-accent)] hover:underline" href={`mailto:${supportEmail}`}>
                 {supportEmail}
               </a>
               .
@@ -112,34 +112,34 @@ export const RefundPolicy = ({
 
   const getColorClasses = (color: string) => {
     const colors = {
-      indigo: 'from-indigo-100 to-indigo-50 text-indigo-600',
-      emerald: 'from-emerald-100 to-emerald-50 text-emerald-600',
-      red: 'from-red-100 to-red-50 text-red-600',
-      purple: 'from-purple-100 to-purple-50 text-purple-600',
-      amber: 'from-amber-100 to-amber-50 text-amber-600',
+      indigo: 'bg-sky-100 text-[var(--ui-accent)]',
+      emerald: 'bg-sky-100 text-[var(--ui-accent)]',
+      red: 'bg-sky-100 text-[var(--ui-accent)]',
+      purple: 'bg-sky-100 text-[var(--ui-accent)]',
+      amber: 'bg-sky-100 text-[var(--ui-accent)]',
     };
     return colors[color as keyof typeof colors] || colors.indigo;
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="ui-page">
       {sections.map((section) => {
         const Icon = section.icon;
         return (
           <div
             key={section.title}
-            className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 sm:rounded-3xl sm:p-6"
+            className="ui-panel group p-5 transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 sm:p-6"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br sm:h-12 sm:w-12 sm:rounded-xl ${getColorClasses(section.color)}`}>
+              <div className={`ui-icon-box ui-icon-box-sm shrink-0 ${getColorClasses(section.color)}`}>
                 <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">{section.title}</h3>
-                <div className="mt-2 space-y-2 text-xs leading-relaxed text-slate-600 sm:mt-3 sm:space-y-3 sm:text-sm">
+                <h3 className="text-lg font-bold text-[var(--ui-ink)] sm:text-xl">{section.title}</h3>
+                <div className="mt-2 space-y-2 text-xs leading-relaxed text-[var(--ui-muted)] sm:mt-3 sm:space-y-3 sm:text-sm">
                   {section.body.map(paragraph => (
                     <p key={paragraph.key} className="flex items-start gap-2">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ui-accent)]" />
                       <span className="flex-1">{paragraph.content}</span>
                     </p>
                   ))}
@@ -151,17 +151,17 @@ export const RefundPolicy = ({
       })}
 
       {/* Contact Section */}
-      <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-5 shadow-sm sm:rounded-3xl sm:p-6">
+      <div className="ui-panel-soft p-5 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 sm:h-12 sm:w-12 sm:rounded-xl">
-            <Mail className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+          <div className="ui-icon-box ui-icon-box-sm shrink-0 bg-[var(--ui-accent)] text-white">
+            <Mail className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
           <div className="flex-1">
-            <h4 className="text-base font-bold text-slate-900 sm:text-lg">Need help with a refund?</h4>
-            <p className="mt-1.5 text-xs text-slate-600 sm:mt-2 sm:text-sm">
+            <h4 className="text-base font-bold text-[var(--ui-ink)] sm:text-lg">Need help with a refund?</h4>
+            <p className="mt-1.5 text-xs text-[var(--ui-muted)] sm:mt-2 sm:text-sm">
               Contact us at
               {' '}
-              <a className="font-semibold text-indigo-600 hover:underline active:underline" href={`mailto:${supportEmail}`}>
+              <a className="font-semibold text-[var(--ui-accent)] hover:underline active:underline" href={`mailto:${supportEmail}`}>
                 {supportEmail}
               </a>
               {' '}

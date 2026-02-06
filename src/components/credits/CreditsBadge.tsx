@@ -16,17 +16,17 @@ export const CreditsBadge = ({ className }: { className?: string }) => {
     <Link
       href={href}
       className={cn(
-        'group inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white/80 px-3 py-1 text-sm font-semibold text-amber-700 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md',
+        'group inline-flex items-center gap-2 rounded-full border border-[var(--ui-line)] bg-white/85 px-3 py-1 text-sm font-semibold text-[var(--ui-ink)] shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md',
         className,
       )}
     >
-      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-amber-600 shadow-sm">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-100 text-[var(--ui-accent)] shadow-sm">
         <Zap className="h-3.5 w-3.5" />
       </span>
       <span className="font-semibold">
         {loading ? 'Loading...' : `${credits ?? 0} credits`}
       </span>
-      <span className="text-xs font-medium text-amber-600 group-hover:underline">
+      <span className="text-xs font-medium text-[var(--ui-accent)] group-hover:underline">
         Top up
       </span>
     </Link>

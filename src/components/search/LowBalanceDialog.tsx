@@ -29,8 +29,12 @@ export const LowBalanceDialog = ({ open, onCloseAction }: LowBalanceDialogProps)
 
   useEffect(() => {
     if (!open) {
-      setCheckinSuccess(false);
-      return;
+      const timer = setTimeout(() => {
+        setCheckinSuccess(false);
+      }, 0);
+      return () => {
+        clearTimeout(timer);
+      };
     }
 
     let active = true;
@@ -163,33 +167,33 @@ export const LowBalanceDialog = ({ open, onCloseAction }: LowBalanceDialogProps)
 
   return (
     <div className={cn('fixed inset-0 z-50 items-center justify-center bg-black/30 p-4 backdrop-blur-sm transition', open ? 'flex' : 'hidden')}>
-      <div className="w-full max-w-md rounded-2xl border border-amber-200 bg-white p-6 shadow-2xl">
+      <div className="ui-panel w-full max-w-md p-6 shadow-2xl">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold text-amber-600 uppercase">Balance needed</p>
-            <h3 className="mt-1 text-xl font-semibold text-slate-900">You are out of credits</h3>
+            <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Balance needed</p>
+            <h3 className="mt-1 text-xl font-semibold text-[var(--ui-ink)]">You are out of credits</h3>
           </div>
           <button
             type="button"
             aria-label="Close dialog"
             onClick={onCloseAction}
-            className="rounded-full p-1 text-slate-500 transition hover:bg-slate-100"
+            className="rounded-full p-1 text-[var(--ui-muted)] transition hover:bg-[var(--ui-soft)]"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-3 text-sm text-[var(--ui-muted)]">
           Each reverse image search costs 1 credit. Get free credits by checking in daily or inviting friends. Paid credits are available anytime.
         </p>
         <div className="mt-5 space-y-4">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase">Free options</p>
+            <p className="text-xs font-semibold text-[var(--ui-muted)] uppercase">Free options</p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={handleCheckIn}
                 disabled={checkinStatusLoading || checkinSubmitting || checkedInToday}
-                className="inline-flex flex-1 items-center justify-center rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-600 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                className="ui-btn-primary flex-1"
               >
                 {checkinSubmitting || checkinStatusLoading
                   ? 'Checking...'
@@ -201,7 +205,7 @@ export const LowBalanceDialog = ({ open, onCloseAction }: LowBalanceDialogProps)
                 type="button"
                 onClick={handleCopyInvite}
                 disabled={inviteLoading}
-                className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                className="ui-btn-secondary flex-1"
               >
                 {inviteLoading ? 'Loading link...' : 'Copy invite link'}
               </button>
@@ -216,14 +220,14 @@ export const LowBalanceDialog = ({ open, onCloseAction }: LowBalanceDialogProps)
           <div className="flex items-center justify-between text-sm">
             <Link
               href={pricingHref}
-              className="font-semibold text-slate-700 hover:underline"
+              className="font-semibold text-[var(--ui-ink)] hover:underline"
               onClick={onCloseAction}
             >
               Go to pricing
             </Link>
             <button
               type="button"
-              className="font-semibold text-slate-500 transition hover:text-slate-700"
+              className="font-semibold text-[var(--ui-muted)] transition hover:text-[var(--ui-ink)]"
               onClick={onCloseAction}
             >
               Maybe later

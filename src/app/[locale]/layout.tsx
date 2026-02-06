@@ -67,7 +67,7 @@ export default async function RootLayout(props: {
 
   return (
     <html lang={locale} className={inter.className}>
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+      <body className="ui-theme min-h-screen bg-[var(--ui-bg)] text-[var(--ui-ink)] antialiased">
         {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-6MMH20X8FF"
