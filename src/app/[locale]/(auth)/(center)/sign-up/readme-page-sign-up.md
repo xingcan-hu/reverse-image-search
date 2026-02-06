@@ -5,7 +5,8 @@
 ## 路由与实现位置
 
 - 路由：`/sign-up`
-- Next.js 文件：`src/app/[locale]/(auth)/(center)/sign-up/[[...sign-up]]/page.tsx`
+- Next.js 文件（主入口）：`src/app/[locale]/(auth)/(center)/sign-up/page.tsx`
+- Next.js 文件（子路径）：`src/app/[locale]/(auth)/(center)/sign-up/[...sign-up]/page.tsx`
 - 居中布局：`src/app/[locale]/(auth)/(center)/layout.tsx`
 - 文案来源：`src/locales/en.json`（`SignUp.*`）
 - 初始赠送 credits：`src/libs/UserService.ts`（`DEFAULT_STARTING_CREDITS = 3`，首次创建用户时写入 DB）
