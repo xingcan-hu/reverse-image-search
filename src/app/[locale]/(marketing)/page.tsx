@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ArrowRight, Check, Globe, Search, Shield, Sparkles } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
-import Link from 'next/link';
+import Link from '@/components/AppLink';
 import { routing } from '@/libs/I18nRouting';
 import { HomeBottomCta, HomeHeroCtas, HomeSignedOutBanner, HomeUseCasesSignedOutCta } from './HomeAuth';
 import { SearchClient } from './search/SearchClient';

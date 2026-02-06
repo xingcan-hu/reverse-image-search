@@ -2,7 +2,7 @@
 
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/components/AppLink';
 
 export const HomeSignedOutBanner = () => {
   return (

@@ -2,7 +2,7 @@
 
 import { Zap } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Link from 'next/link';
+import Link from '@/components/AppLink';
 import { routing } from '@/libs/I18nRouting';
 import { cn } from '@/utils/Cn';
 import { useCredits } from './CreditsProvider';

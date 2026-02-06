@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ArrowRight, RefreshCw, Shield } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
-import Link from 'next/link';
+import Link from '@/components/AppLink';
 import { RefundPolicy } from '@/components/legal/RefundPolicy';
 import { routing } from '@/libs/I18nRouting';
 

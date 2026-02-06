@@ -2,9 +2,9 @@
 
 import { X } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import Link from '@/components/AppLink';
 import { useCredits } from '@/components/credits/CreditsProvider';
 import { routing } from '@/libs/I18nRouting';
 import { cn } from '@/utils/Cn';

@@ -3,9 +3,9 @@
 import { UserButton } from '@clerk/nextjs';
 import { Copy, Gift, LogOut, Receipt, Share2, Wallet } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import Link from '@/components/AppLink';
 import { useCredits } from '@/components/credits/CreditsProvider';
 import { routing } from '@/libs/I18nRouting';
 
@@ -346,14 +346,16 @@ export const AccountClient = () => {
               {checkinLoading ? 'Checking...' : checkedInToday ? 'Checked in today' : 'Check in +1 credit'}
             </button>
             {checkinSuccess && (
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 animate-bounce">
+              <span className="inline-flex animate-bounce items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
                 +1 credit added
               </span>
             )}
             {nextResetAt && (
               <span className="text-xs text-slate-500">
-                Resets at {resetAtFormatter.format(new Date(nextResetAt))}
+                Resets at
+                {' '}
+                {resetAtFormatter.format(new Date(nextResetAt))}
               </span>
             )}
           </div>
@@ -396,15 +398,21 @@ export const AccountClient = () => {
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-              Invited {inviteStats.invitedUsers}
+              Invited
+              {' '}
+              {inviteStats.invitedUsers}
             </span>
             <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-              Earned {inviteStats.creditsEarned} credits
+              Earned
+              {' '}
+              {inviteStats.creditsEarned}
+              {' '}
+              credits
             </span>
           </div>
           {!inviteLoading && inviteRecent.length > 0 && (
             <div className="mt-4 space-y-2 text-xs text-slate-600">
-              {inviteRecent.map((item) => (
+              {inviteRecent.map(item => (
                 <div key={item.inviteeUserId} className="flex items-center justify-between">
                   <span>{item.inviteeEmailMasked ?? 'New member'}</span>
                   <span>{item.createdAt ? createdAtFormatter.format(new Date(item.createdAt)) : '—'}</span>

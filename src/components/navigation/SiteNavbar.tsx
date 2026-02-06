@@ -3,8 +3,8 @@
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Menu, X } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Link from 'next/link';
 import { useState } from 'react';
+import Link from '@/components/AppLink';
 import { routing } from '@/libs/I18nRouting';
 import { cn } from '@/utils/Cn';
 import { CreditsBadge } from '../credits/CreditsBadge';
