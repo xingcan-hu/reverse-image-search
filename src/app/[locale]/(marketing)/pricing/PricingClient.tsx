@@ -281,7 +281,7 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
             </div>
             <Link
               href={`${localePrefix}/sign-up`}
-              className="ui-btn-primary ui-btn-lg ui-btn-block sm:w-auto"
+              className="ui-btn-primary ui-btn-lg w-full sm:w-auto"
             >
               Get Started Free
               <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />

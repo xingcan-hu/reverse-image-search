@@ -283,7 +283,7 @@ export const SearchClient = () => {
                   const signUpUrl = `${apiPrefix}/sign-up`;
                   router.push(signUpUrl);
                 }}
-                className="ui-btn-primary ui-btn-lg ui-btn-block sm:w-auto"
+                className="ui-btn-primary ui-btn-lg w-full sm:w-auto"
               >
                 <Zap className="h-4 w-4" />
                 Create free account
@@ -291,7 +291,7 @@ export const SearchClient = () => {
               </button>
               <Link
                 href={`${apiPrefix}/pricing`}
-                className="ui-btn-secondary ui-btn-lg ui-btn-block sm:w-auto"
+                className="ui-btn-secondary ui-btn-lg w-full sm:w-auto"
               >
                 View pricing
               </Link>
@@ -359,13 +359,13 @@ export const SearchClient = () => {
                   <button
                     type="button"
                     onClick={() => setLowBalanceOpen(true)}
-                    className="ui-btn-primary ui-btn-xs ui-btn-block sm:w-auto"
+                    className="ui-btn-primary ui-btn-xs w-full sm:w-auto"
                   >
                     Get free credits
                   </button>
                   <Link
                     href={locale === routing.defaultLocale ? '/pricing' : `/${locale}/pricing`}
-                    className="ui-btn-secondary ui-btn-xs ui-btn-block sm:w-auto"
+                    className="ui-btn-secondary ui-btn-xs w-full sm:w-auto"
                   >
                     Buy credits
                   </Link>
@@ -426,7 +426,7 @@ export const SearchClient = () => {
                   onClick={() => void handleSearchUrl()}
                   disabled={isSearching || !imageUrlInput.trim()}
                   className={cn(
-                    'ui-btn-primary ui-btn-lg ui-btn-block shrink-0 sm:w-auto',
+                    'ui-btn-primary ui-btn-lg w-full shrink-0 sm:w-auto',
                     (isSearching || !imageUrlInput.trim()) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-lg',
                   )}
                 >
