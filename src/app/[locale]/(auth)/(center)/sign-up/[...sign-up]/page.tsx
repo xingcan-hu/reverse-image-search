@@ -39,7 +39,7 @@ export default async function SignUpPage(props: ISignUpPageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+    <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
       <section className="ui-panel-hero hidden bg-[var(--ui-soft)]/65 p-10 lg:block">
         <p className="ui-kicker">Get Started</p>
         <h1 className="ui-heading-lg mt-4">
@@ -52,7 +52,7 @@ export default async function SignUpPage(props: ISignUpPageProps) {
         </p>
       </section>
 
-      <section className="ui-panel ui-panel-lg bg-white/90 p-3 sm:p-6">
+      <section className="ui-panel ui-panel-lg min-w-0 bg-white/90 p-3 sm:p-6">
         <SignUp path={getI18nPath('/sign-up', locale)} appearance={signUpAppearance} />
       </section>
     </div>

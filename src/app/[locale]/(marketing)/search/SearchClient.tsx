@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/nextjs';
 import { ArrowRight, Globe, ImageIcon, Loader2, Search, ShieldCheck, Sparkles, UploadCloud, Zap } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 import Link from '@/components/AppLink';
@@ -24,6 +24,7 @@ export const SearchClient = () => {
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lowBalanceOpen, setLowBalanceOpen] = useState(false);
+  const resultsAnchorRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const router = useRouter();
   const { isSignedIn } = useAuth();
@@ -246,6 +247,18 @@ export const SearchClient = () => {
 
   const isSearching = status === 'searching';
 
+  useEffect(() => {
+    if (status !== 'success') {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      resultsAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [status]);
+
   const statusLabel = useMemo(() => {
     if (isSearching) {
       return 'Searching for visual matches...';
@@ -264,9 +277,9 @@ export const SearchClient = () => {
     return (
       <>
         <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
-        <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-6">
-          <div className="space-y-4 sm:space-y-5">
-            <p className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700">
+        <div className="grid w-full min-w-0 gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-6">
+          <div className="min-w-0 space-y-4 sm:space-y-5">
+            <p className="inline-flex items-center gap-2 rounded-full bg-sky-100/80 px-4 py-2 text-sm font-semibold text-sky-700">
               <Sparkles className="h-4 w-4" />
               3 free searches for new accounts
             </p>
@@ -301,26 +314,24 @@ export const SearchClient = () => {
             </p>
           </div>
 
-          <div className="ui-panel-soft p-4 sm:p-5">
-            <div className="ui-panel p-4 shadow-sm sm:p-5">
-              <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
-                <Search className="h-3.5 w-3.5" />
-                Search preview
-              </p>
-              <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 sm:h-44">
-                <div className="text-center">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white">
-                    <Search className="h-6 w-6" />
-                  </div>
-                  <p className="mt-3 text-sm font-semibold text-slate-900">Upload an image after sign in</p>
-                  <p className="mt-1 text-xs text-slate-500">JPG, PNG, WEBP · up to 5MB</p>
+          <div className="min-w-0 rounded-3xl bg-gradient-to-b from-white to-slate-50 p-4 shadow-[0_16px_35px_-28px_rgba(15,23,42,0.38)] sm:p-5">
+            <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
+              <Search className="h-3.5 w-3.5" />
+              Search preview
+            </p>
+            <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 sm:h-44">
+              <div className="text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white">
+                  <Search className="h-6 w-6" />
                 </div>
+                <p className="mt-3 text-sm font-semibold text-slate-900">Upload an image after sign in</p>
+                <p className="mt-1 text-xs text-slate-500">JPG, PNG, WEBP · up to 5MB</p>
               </div>
-              <div className="mt-4 grid gap-2 text-xs text-slate-600">
-                <p>• Search across 50+ image sources</p>
-                <p>• Find matching pages and thumbnails</p>
-                <p>• Discover higher-resolution versions</p>
-              </div>
+            </div>
+            <div className="mt-4 grid gap-2 text-xs text-slate-600">
+              <p>• Search across 50+ image sources</p>
+              <p>• Find matching pages and thumbnails</p>
+              <p>• Discover higher-resolution versions</p>
             </div>
           </div>
         </div>
@@ -332,10 +343,10 @@ export const SearchClient = () => {
   return (
     <>
       <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
-      <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-6">
-        <div className="space-y-5 sm:space-y-6">
+      <div className="grid w-full min-w-0 gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-6">
+        <div className="min-w-0 space-y-5 sm:space-y-6">
           {/* Upload Section */}
-          <div className="ui-panel p-4 sm:p-6">
+          <div className="min-w-0 rounded-3xl bg-white/92 p-4 shadow-[0_16px_35px_-28px_rgba(15,23,42,0.38)] sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Powered Search</p>
@@ -350,7 +361,7 @@ export const SearchClient = () => {
             </div>
 
             {outOfCredits && (
-              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+              <div className="mt-4 rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">
                 <p className="font-semibold">You are out of credits.</p>
                 <p className="mt-1 text-amber-800">
                   Get free credits by checking in daily or inviting friends, or buy credits anytime.
@@ -409,7 +420,7 @@ export const SearchClient = () => {
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div className="mt-4 min-w-0 rounded-2xl bg-slate-50/90 p-4">
               <p className="text-xs font-semibold text-slate-500 uppercase">Or search by URL</p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -418,7 +429,7 @@ export const SearchClient = () => {
                   placeholder="https://example.com/image.jpg"
                   inputMode="url"
                   autoComplete="off"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition outline-none focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
+                  className="w-full min-w-0 rounded-xl bg-white px-4 py-3 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200 transition outline-none focus:ring-2 focus:ring-sky-200"
                   disabled={isSearching}
                 />
                 <button
@@ -440,9 +451,9 @@ export const SearchClient = () => {
             </div>
 
             {previewUrl && (
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-4 rounded-2xl bg-slate-50 p-3">
                 <p className="text-xs font-semibold text-slate-500 uppercase">Preview</p>
-                <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="mt-2 overflow-hidden rounded-xl bg-white shadow-sm">
                   <img
                     src={previewUrl}
                     alt="Uploaded preview"
@@ -453,14 +464,14 @@ export const SearchClient = () => {
             )}
 
             {errorMessage && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                 {errorMessage}
               </div>
             )}
           </div>
 
           {/* Features Info */}
-          <div className="ui-panel-soft grid gap-3 p-4 sm:p-6 md:grid-cols-3">
+          <div className="grid min-w-0 gap-3 rounded-3xl bg-slate-50/85 p-4 sm:p-6 md:grid-cols-3">
             <div className="flex items-start gap-3">
               <div className="ui-icon-box ui-icon-box-sm shrink-0">
                 <Globe className="h-5 w-5 text-[var(--ui-accent)]" />
@@ -491,8 +502,12 @@ export const SearchClient = () => {
           </div>
         </div>
 
-        <div className="space-y-5 sm:space-y-6">
-          <div className="ui-panel p-4 sm:p-6">
+        <div
+          id="search-results"
+          ref={resultsAnchorRef}
+          className="min-w-0 space-y-5 sm:space-y-6"
+        >
+          <div className="min-w-0 rounded-3xl bg-white/92 p-4 shadow-[0_16px_35px_-28px_rgba(15,23,42,0.38)] sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Search Results</p>
@@ -516,7 +531,7 @@ export const SearchClient = () => {
             {isSearching && (
               <div className="mt-6 grid grid-cols-1 gap-4">
                 {['skeleton-a', 'skeleton-b', 'skeleton-c'].map(key => (
-                  <div key={key} className="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <div key={key} className="flex gap-3 rounded-xl bg-slate-50 p-3">
                     <div className="h-20 w-20 shrink-0 animate-pulse rounded-lg bg-slate-200" />
                     <div className="flex-1 space-y-2">
                       <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200" />
@@ -528,7 +543,7 @@ export const SearchClient = () => {
             )}
 
             {status === 'success' && results.length === 0 && (
-              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-6">
+              <div className="mt-6 rounded-2xl bg-amber-50 px-5 py-6">
                 <p className="font-semibold text-amber-900">No matches found</p>
                 <p className="mt-1 text-sm text-amber-700">
                   Try another image, a different angle, or a higher resolution photo for better results.
@@ -544,7 +559,7 @@ export const SearchClient = () => {
                     href={result.link || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex gap-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-md"
+                    className="group flex min-w-0 gap-4 overflow-hidden rounded-xl bg-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
                   >
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                       {result.thumbnail
@@ -568,7 +583,7 @@ export const SearchClient = () => {
                           {result.title || 'Match'}
                         </p>
                         {result.source && (
-                          <span className="shrink-0 rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm">
+                          <span className="max-w-28 shrink-0 truncate rounded-full bg-white px-2 py-1 text-xs font-semibold text-slate-600 shadow-sm">
                             {result.source}
                           </span>
                         )}
@@ -588,7 +603,7 @@ export const SearchClient = () => {
             )}
 
             {status === 'idle' && results.length === 0 && (
-              <div className="ui-panel-soft mt-6 space-y-4 p-6 text-center">
+              <div className="mt-6 space-y-4 rounded-2xl bg-slate-50/90 p-6 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sky-100">
                   <Search className="h-8 w-8 text-[var(--ui-accent)]" />
                 </div>
@@ -620,7 +635,7 @@ export const SearchClient = () => {
 
           {/* Quick Tips */}
           {status === 'idle' && results.length === 0 && (
-            <div className="ui-panel p-4 sm:p-5">
+            <div className="rounded-2xl bg-white/92 p-4 shadow-[0_14px_28px_-26px_rgba(15,23,42,0.5)] sm:p-5">
               <p className="text-sm font-semibold text-slate-900">💡 Pro Tips</p>
               <ul className="mt-3 space-y-2 text-xs text-slate-600">
                 <li className="flex gap-2">

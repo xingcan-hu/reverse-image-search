@@ -223,8 +223,8 @@ export const AccountClient = () => {
 
   return (
     <div className="ui-page">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="ui-panel p-6">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+        <div className="ui-panel min-w-0 p-6">
           <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Credits</p>
           <div className="mt-2 flex items-end gap-3">
             <p className="text-5xl font-bold text-[var(--ui-ink)]">{credits ?? 0}</p>
@@ -246,9 +246,9 @@ export const AccountClient = () => {
             </Link>
           </div>
         </div>
-        <div className="ui-panel p-6">
-          <div className="flex items-start justify-between">
-            <div>
+        <div className="ui-panel min-w-0 p-6">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Account</p>
               <p className="text-lg font-semibold text-[var(--ui-ink)]">Manage your session</p>
               <p className="text-sm text-[var(--ui-muted)]">Signed in with Clerk. Secure payments via Stripe.</p>
@@ -278,9 +278,9 @@ export const AccountClient = () => {
         </div>
       </div>
 
-      <div className="ui-panel p-6">
-        <div className="flex items-center justify-between">
-          <div>
+      <div className="ui-panel min-w-0 p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">History</p>
             <h2 className="text-xl font-semibold text-[var(--ui-ink)]">Recent recharges</h2>
           </div>
@@ -324,10 +324,10 @@ export const AccountClient = () => {
         )}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="ui-panel p-6">
-          <div className="flex items-start justify-between">
-            <div>
+      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+        <div className="ui-panel min-w-0 p-6">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Daily check-in</p>
               <h2 className="text-lg font-semibold text-[var(--ui-ink)]">Earn +1 credit every day</h2>
               <p className="mt-1 text-sm text-[var(--ui-muted)]">Check in once per day. Credits never expire.</p>
@@ -367,9 +367,9 @@ export const AccountClient = () => {
           )}
         </div>
 
-        <div className="ui-panel p-6">
-          <div className="flex items-start justify-between">
-            <div>
+        <div className="ui-panel min-w-0 p-6">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Invite friends</p>
               <h2 className="text-lg font-semibold text-[var(--ui-ink)]">Get 20 credits per signup</h2>
               <p className="mt-1 text-sm text-[var(--ui-muted)]">Share your link. Your friend signs up, you earn.</p>
@@ -413,9 +413,9 @@ export const AccountClient = () => {
           {!inviteLoading && inviteRecent.length > 0 && (
             <div className="mt-4 space-y-2 text-xs text-[var(--ui-muted)]">
               {inviteRecent.map(item => (
-                <div key={item.inviteeUserId} className="flex items-center justify-between">
-                  <span>{item.inviteeEmailMasked ?? 'New member'}</span>
-                  <span>{item.createdAt ? createdAtFormatter.format(new Date(item.createdAt)) : '—'}</span>
+                <div key={item.inviteeUserId} className="flex min-w-0 items-center justify-between gap-3">
+                  <span className="truncate">{item.inviteeEmailMasked ?? 'New member'}</span>
+                  <span className="shrink-0">{item.createdAt ? createdAtFormatter.format(new Date(item.createdAt)) : '—'}</span>
                 </div>
               ))}
             </div>

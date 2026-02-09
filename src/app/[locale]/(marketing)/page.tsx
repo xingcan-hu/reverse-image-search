@@ -110,8 +110,8 @@ export default async function Index(props: IIndexProps) {
   };
 
   const searchToolSection = (
-    <section className="home-fade-up home-search-tool overflow-hidden rounded-[2.2rem] border border-[var(--home-line)] bg-white/85 p-4 shadow-[0_30px_60px_-45px_rgba(15,23,42,0.65)] backdrop-blur-sm sm:p-8">
-      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+    <section className="home-fade-up home-search-tool w-full min-w-0 overflow-hidden rounded-[2.2rem] bg-white/82 p-4 shadow-[0_24px_52px_-42px_rgba(15,23,42,0.6)] backdrop-blur-sm sm:p-8">
+      <div className="mb-4 flex min-w-0 flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div>
           <p className="text-xs font-semibold tracking-[0.18em] text-[var(--home-accent)] uppercase">Search Tool</p>
           <h2 className="mt-2 text-2xl font-semibold text-[var(--home-ink)] sm:text-4xl">
@@ -120,7 +120,7 @@ export default async function Index(props: IIndexProps) {
             <span className="home-title-accent">in seconds</span>
           </h2>
         </div>
-        <p className="w-fit rounded-full border border-[var(--home-line)] bg-[var(--home-paper)] px-4 py-2 text-xs font-medium text-slate-600 sm:text-sm">
+        <p className="max-w-full px-1 text-xs font-medium text-slate-500 sm:w-fit sm:text-sm">
           Upload file, drag-and-drop, or image URL
         </p>
       </div>
@@ -130,19 +130,19 @@ export default async function Index(props: IIndexProps) {
 
   const authLoadingFallback = (
     <div className="home-auth-loading space-y-6 pb-8 font-[var(--home-font)] sm:space-y-8 sm:pb-12">
-      <section className="home-search-tool overflow-hidden rounded-[2.2rem] border border-[var(--home-line)] bg-white/85 p-4 shadow-[0_30px_60px_-45px_rgba(15,23,42,0.65)] sm:p-8">
+      <section className="home-search-tool overflow-hidden rounded-[2.2rem] bg-white/82 p-4 shadow-[0_24px_52px_-42px_rgba(15,23,42,0.6)] sm:p-8">
         <div className="animate-pulse space-y-6">
           <div className="space-y-3">
             <div className="h-3 w-24 rounded-full bg-slate-200" />
             <div className="h-8 w-3/5 rounded-lg bg-slate-200 sm:h-10" />
           </div>
           <div className="grid gap-5 lg:grid-cols-2">
-            <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-5">
+            <div className="space-y-4 rounded-3xl bg-white p-5">
               <div className="h-4 w-28 rounded-full bg-slate-200" />
               <div className="h-60 rounded-2xl bg-slate-100 sm:h-72" />
               <div className="h-10 w-full rounded-xl bg-slate-100" />
             </div>
-            <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-5">
+            <div className="space-y-4 rounded-3xl bg-white p-5">
               <div className="h-4 w-32 rounded-full bg-slate-200" />
               <div className="h-20 rounded-xl bg-slate-100" />
               <div className="h-20 rounded-xl bg-slate-100" />

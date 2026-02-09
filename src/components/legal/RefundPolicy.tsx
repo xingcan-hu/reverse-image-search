@@ -76,7 +76,7 @@ export const RefundPolicy = ({
             <Fragment key="contact-email">
               Contact us at
               {' '}
-              <a className="font-semibold text-[var(--ui-accent)] hover:underline" href={`mailto:${supportEmail}`}>
+              <a className="font-semibold break-all text-[var(--ui-accent)] hover:underline" href={`mailto:${supportEmail}`}>
                 {supportEmail}
               </a>
               .
@@ -161,7 +161,7 @@ export const RefundPolicy = ({
             <p className="mt-1.5 text-xs text-[var(--ui-muted)] sm:mt-2 sm:text-sm">
               Contact us at
               {' '}
-              <a className="font-semibold text-[var(--ui-accent)] hover:underline active:underline" href={`mailto:${supportEmail}`}>
+              <a className="font-semibold break-all text-[var(--ui-accent)] hover:underline active:underline" href={`mailto:${supportEmail}`}>
                 {supportEmail}
               </a>
               {' '}

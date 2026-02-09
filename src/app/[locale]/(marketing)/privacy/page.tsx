@@ -140,7 +140,7 @@ export default async function PrivacyPage(props: PrivacyPageProps) {
             <p className="mt-1.5 text-xs text-[var(--ui-muted)] sm:mt-2 sm:text-sm">
               If you have questions or want to request deletion of your account data, contact us at
               {' '}
-              <a href="mailto:help@support.reverseimage.io" className="font-semibold text-[var(--ui-accent)] hover:underline active:underline">
+              <a href="mailto:help@support.reverseimage.io" className="font-semibold break-all text-[var(--ui-accent)] hover:underline active:underline">
                 help@support.reverseimage.io
               </a>
             </p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { ClerkLoading, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Menu, X } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
@@ -58,10 +58,58 @@ export const SiteNavbar = () => {
     ));
   };
 
+  const desktopSignedOutNav = (
+    <nav className="inline-flex items-center gap-1 rounded-full border border-[var(--ui-line)] bg-white/85 p-1 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.85)]">
+      {renderLinks(signedOutLinks)}
+    </nav>
+  );
+
+  const desktopSignedInNav = (
+    <nav className="inline-flex items-center gap-1 rounded-full border border-[var(--ui-line)] bg-white/85 p-1 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.85)]">
+      {renderLinks(signedInLinks)}
+    </nav>
+  );
+
+  const desktopSignedOutActions = (
+    <>
+      <Link
+        href={`${localePrefix}/sign-in`}
+        className="ui-btn-secondary whitespace-nowrap"
+      >
+        Sign in
+      </Link>
+      <Link
+        href={`${localePrefix}/sign-up`}
+        className="ui-btn-primary whitespace-nowrap"
+      >
+        Get started
+      </Link>
+    </>
+  );
+
+  const mobileSignedOutActions = (
+    <>
+      <Link
+        href={`${localePrefix}/sign-up`}
+        className="ui-btn-primary ui-btn-block"
+        onClick={() => setOpen(false)}
+      >
+        Get started
+      </Link>
+      <Link
+        href={`${localePrefix}/sign-in`}
+        className="ui-btn-secondary ui-btn-block"
+        onClick={() => setOpen(false)}
+      >
+        Sign in
+      </Link>
+    </>
+  );
+
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--ui-line)] bg-[color:rgb(245_245_247/0.84)] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
-        <Link href={`${localePrefix || '/'}`} className="group flex items-center gap-3">
+    <header className="sticky top-0 z-40 overflow-x-clip border-b border-[var(--ui-line)] bg-[color:rgb(245_245_247/0.92)] backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl min-w-0 items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
+        <Link href={`${localePrefix || '/'}`} className="group flex min-w-0 shrink-0 items-center gap-3">
           <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/60 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-[0_12px_24px_-18px_rgba(15,23,42,0.9)]">
             <Image src={favicon32} alt="Logo" className="h-full w-full object-cover opacity-95" priority />
           </span>
@@ -71,28 +119,27 @@ export const SiteNavbar = () => {
           </span>
         </Link>
 
-        <div className="hidden md:flex md:flex-1 md:justify-center">
-          <SignedOut>
-            <nav className="inline-flex items-center gap-1 rounded-full border border-[var(--ui-line)] bg-white/85 p-1 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.85)]">
-              {renderLinks(signedOutLinks)}
-            </nav>
-          </SignedOut>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-center">
+          <ClerkLoading>{desktopSignedOutNav}</ClerkLoading>
+          <SignedOut>{desktopSignedOutNav}</SignedOut>
           <SignedIn>
-            <nav className="inline-flex items-center gap-1 rounded-full border border-[var(--ui-line)] bg-white/85 p-1 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.85)]">
-              {renderLinks(signedInLinks)}
-            </nav>
+            {desktopSignedInNav}
           </SignedIn>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <SignedIn>
-            <CreditsBadge className="hidden lg:flex" />
-            <Link
-              href={`${localePrefix || '/'}`}
-              className="ui-btn-primary hidden md:inline-flex"
-            >
-              New search
-            </Link>
+            <div className="hidden lg:flex">
+              <CreditsBadge className="whitespace-nowrap" />
+            </div>
+            <div className="hidden lg:flex">
+              <Link
+                href={`${localePrefix || '/'}`}
+                className="ui-btn-primary whitespace-nowrap"
+              >
+                New search
+              </Link>
+            </div>
             <UserButton
               appearance={{
                 elements: {
@@ -102,25 +149,15 @@ export const SiteNavbar = () => {
             />
           </SignedIn>
 
-          <SignedOut>
-            <Link
-              href={`${localePrefix}/sign-in`}
-              className="ui-btn-secondary hidden md:inline-flex"
-            >
-              Sign in
-            </Link>
-            <Link
-              href={`${localePrefix}/sign-up`}
-              className="ui-btn-primary hidden md:inline-flex"
-            >
-              Get started
-            </Link>
-          </SignedOut>
+          <div className="hidden lg:flex lg:items-center lg:gap-2">
+            <ClerkLoading>{desktopSignedOutActions}</ClerkLoading>
+            <SignedOut>{desktopSignedOutActions}</SignedOut>
+          </div>
 
           <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--ui-line)] bg-white/90 text-[var(--ui-ink)] transition hover:bg-[var(--ui-soft)] md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--ui-line)] bg-white/90 text-[var(--ui-ink)] transition hover:bg-[var(--ui-soft)] lg:hidden"
           >
             <span className="sr-only">Toggle navigation</span>
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -130,11 +167,12 @@ export const SiteNavbar = () => {
 
       <div
         className={cn(
-          'px-4 pb-4 md:hidden',
+          'px-4 pb-4 lg:hidden',
           open ? 'block' : 'hidden',
         )}
       >
         <div className="ui-panel ui-panel-lg space-y-2 bg-white/95 p-3 shadow-xl">
+          <ClerkLoading>{renderLinks(signedOutLinks, true)}</ClerkLoading>
           <SignedOut>{renderLinks(signedOutLinks, true)}</SignedOut>
           <SignedIn>{renderLinks(signedInLinks, true)}</SignedIn>
           <div className="my-1 h-px bg-[var(--ui-line)]" />
@@ -148,22 +186,8 @@ export const SiteNavbar = () => {
               New search
             </Link>
           </SignedIn>
-          <SignedOut>
-            <Link
-              href={`${localePrefix}/sign-up`}
-              className="ui-btn-primary ui-btn-block"
-              onClick={() => setOpen(false)}
-            >
-              Get started
-            </Link>
-            <Link
-              href={`${localePrefix}/sign-in`}
-              className="ui-btn-secondary ui-btn-block"
-              onClick={() => setOpen(false)}
-            >
-              Sign in
-            </Link>
-          </SignedOut>
+          <ClerkLoading>{mobileSignedOutActions}</ClerkLoading>
+          <SignedOut>{mobileSignedOutActions}</SignedOut>
           <p className="px-1 pt-1 text-xs text-[var(--ui-muted)]">Reverse image search with transparent credits</p>
         </div>
       </div>
