@@ -264,26 +264,26 @@ export const SearchClient = () => {
     return (
       <>
         <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="space-y-5">
+        <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-6">
+          <div className="space-y-4 sm:space-y-5">
             <p className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700">
               <Sparkles className="h-4 w-4" />
               3 free searches for new accounts
             </p>
-            <h3 className="max-w-xl text-3xl leading-tight font-semibold text-slate-900 sm:text-4xl">
+            <h3 className="max-w-xl text-2xl leading-tight font-semibold text-slate-900 sm:text-4xl">
               Create an account and run your first reverse image search in seconds
             </h3>
-            <p className="max-w-xl text-base leading-relaxed text-slate-600">
+            <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
               We support upload, drag-and-drop, and public image URLs. After sign-up, you can start searching immediately with free credits.
             </p>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <button
                 type="button"
                 onClick={() => {
                   const signUpUrl = `${apiPrefix}/sign-up`;
                   router.push(signUpUrl);
                 }}
-                className="ui-btn-primary ui-btn-lg"
+                className="ui-btn-primary ui-btn-lg ui-btn-block sm:w-auto"
               >
                 <Zap className="h-4 w-4" />
                 Create free account
@@ -291,7 +291,7 @@ export const SearchClient = () => {
               </button>
               <Link
                 href={`${apiPrefix}/pricing`}
-                className="ui-btn-secondary ui-btn-lg"
+                className="ui-btn-secondary ui-btn-lg ui-btn-block sm:w-auto"
               >
                 View pricing
               </Link>
@@ -301,13 +301,13 @@ export const SearchClient = () => {
             </p>
           </div>
 
-          <div className="ui-panel-soft p-5">
-            <div className="ui-panel p-5 shadow-sm">
+          <div className="ui-panel-soft p-4 sm:p-5">
+            <div className="ui-panel p-4 shadow-sm sm:p-5">
               <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
                 <Search className="h-3.5 w-3.5" />
                 Search preview
               </p>
-              <div className="mt-4 flex h-44 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
+              <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 sm:h-44">
                 <div className="text-center">
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white">
                     <Search className="h-6 w-6" />
@@ -332,16 +332,16 @@ export const SearchClient = () => {
   return (
     <>
       <LowBalanceDialog open={lowBalanceOpen} onCloseAction={() => setLowBalanceOpen(false)} />
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
+      <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:gap-6">
+        <div className="space-y-5 sm:space-y-6">
           {/* Upload Section */}
-          <div className="ui-panel p-6">
-            <div className="flex items-center justify-between">
+          <div className="ui-panel p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Powered Search</p>
-                <h2 className="text-2xl font-semibold text-slate-900">Find Similar Images</h2>
+                <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">Find Similar Images</h2>
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                 <Sparkles className="h-4 w-4" />
                 {credits ?? 0}
                 {' '}
@@ -355,17 +355,17 @@ export const SearchClient = () => {
                 <p className="mt-1 text-amber-800">
                   Get free credits by checking in daily or inviting friends, or buy credits anytime.
                 </p>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                   <button
                     type="button"
                     onClick={() => setLowBalanceOpen(true)}
-                    className="ui-btn-primary ui-btn-xs"
+                    className="ui-btn-primary ui-btn-xs ui-btn-block sm:w-auto"
                   >
                     Get free credits
                   </button>
                   <Link
                     href={locale === routing.defaultLocale ? '/pricing' : `/${locale}/pricing`}
-                    className="ui-btn-secondary ui-btn-xs"
+                    className="ui-btn-secondary ui-btn-xs ui-btn-block sm:w-auto"
                   >
                     Buy credits
                   </Link>
@@ -376,7 +376,7 @@ export const SearchClient = () => {
             <div
               {...getRootProps()}
               className={cn(
-                'relative mt-6 flex h-72 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition',
+                'relative mt-5 flex h-60 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition sm:mt-6 sm:h-72',
                 isDragActive
                   ? 'border-sky-400 bg-gradient-to-br from-sky-50 to-white'
                   : 'border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 hover:border-sky-300 hover:from-sky-50/50 hover:to-white',
@@ -394,10 +394,10 @@ export const SearchClient = () => {
                   ? <Loader2 className="h-8 w-8 animate-spin text-white" />
                   : <UploadCloud className="h-8 w-8 text-white" />}
               </div>
-              <p className="mt-4 text-xl font-bold text-slate-900">
+              <p className="mt-4 px-4 text-center text-lg font-bold text-slate-900 sm:text-xl">
                 {isDragActive ? 'Drop your image here' : statusLabel}
               </p>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 px-4 text-center text-sm text-slate-600">
                 Drag & drop or click to upload
               </p>
               <p className="mt-1 text-xs text-slate-500">
@@ -426,7 +426,7 @@ export const SearchClient = () => {
                   onClick={() => void handleSearchUrl()}
                   disabled={isSearching || !imageUrlInput.trim()}
                   className={cn(
-                    'ui-btn-primary ui-btn-lg shrink-0',
+                    'ui-btn-primary ui-btn-lg ui-btn-block shrink-0 sm:w-auto',
                     (isSearching || !imageUrlInput.trim()) && 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-lg',
                   )}
                 >
@@ -460,7 +460,7 @@ export const SearchClient = () => {
           </div>
 
           {/* Features Info */}
-          <div className="ui-panel-soft grid gap-3 p-6 md:grid-cols-3">
+          <div className="ui-panel-soft grid gap-3 p-4 sm:p-6 md:grid-cols-3">
             <div className="flex items-start gap-3">
               <div className="ui-icon-box ui-icon-box-sm shrink-0">
                 <Globe className="h-5 w-5 text-[var(--ui-accent)]" />
@@ -491,22 +491,22 @@ export const SearchClient = () => {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="ui-panel p-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-5 sm:space-y-6">
+          <div className="ui-panel p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Search Results</p>
-                <h2 className="text-2xl font-semibold text-slate-900">Visual Matches</h2>
+                <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">Visual Matches</h2>
               </div>
               {status === 'success' && results.length > 0 && (
-                <div className="rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
+                <div className="inline-flex w-fit rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                   {results.length}
                   {' '}
                   found
                 </div>
               )}
               {isSearching && (
-                <div className="flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
+                <div className="inline-flex w-fit items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-[var(--ui-accent)]">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Searching...
                 </div>
@@ -620,7 +620,7 @@ export const SearchClient = () => {
 
           {/* Quick Tips */}
           {status === 'idle' && results.length === 0 && (
-            <div className="ui-panel p-5">
+            <div className="ui-panel p-4 sm:p-5">
               <p className="text-sm font-semibold text-slate-900">💡 Pro Tips</p>
               <ul className="mt-3 space-y-2 text-xs text-slate-600">
                 <li className="flex gap-2">

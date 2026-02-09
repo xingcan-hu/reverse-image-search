@@ -1,8 +1,37 @@
 'use client';
 
-import { SignedIn, SignedOut } from '@clerk/nextjs';
+import type { ReactNode } from 'react';
+import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut } from '@clerk/nextjs';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Link from '@/components/AppLink';
+
+export const HomeSignedInOnly = ({ children }: { children: ReactNode }) => {
+  return (
+    <ClerkLoaded>
+      <SignedIn>
+        {children}
+      </SignedIn>
+    </ClerkLoaded>
+  );
+};
+
+export const HomeSignedOutOnly = ({ children }: { children: ReactNode }) => {
+  return (
+    <ClerkLoaded>
+      <SignedOut>
+        {children}
+      </SignedOut>
+    </ClerkLoaded>
+  );
+};
+
+export const HomeAuthLoadingOnly = ({ children }: { children: ReactNode }) => {
+  return (
+    <ClerkLoading>
+      {children}
+    </ClerkLoading>
+  );
+};
 
 export const HomeSignedOutBanner = () => {
   return (

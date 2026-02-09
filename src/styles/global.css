@@ -24,11 +24,9 @@
 @keyframes home-fade-up {
   from {
     opacity: 0;
-    transform: translateY(18px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -194,10 +192,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  min-height: 2.55rem;
+  min-height: 2.75rem;
   border-radius: 9999px;
-  padding: 0.5rem 1.05rem;
-  font-size: 0.875rem;
+  padding: 0.56rem 1.08rem;
+  font-size: 0.9rem;
   font-weight: 650;
   transition:
     transform 180ms ease,
@@ -243,16 +241,16 @@
 }
 
 .ui-btn-xs {
-  min-height: 2.1rem;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.75rem;
+  min-height: 2.4rem;
+  padding: 0.42rem 0.9rem;
+  font-size: 0.8rem;
   font-weight: 650;
 }
 
 .ui-btn-lg {
-  min-height: 2.9rem;
-  padding: 0.65rem 1.45rem;
-  font-size: 0.95rem;
+  min-height: 3rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.98rem;
   font-weight: 700;
 }
 
@@ -260,12 +258,87 @@
   width: 100%;
 }
 
+@media (max-width: 767px) {
+  .ui-page {
+    gap: 1.4rem;
+  }
+
+  .ui-heading-lg {
+    font-size: clamp(1.55rem, 7.4vw, 2.25rem);
+    line-height: 1.15;
+  }
+
+  .ui-heading-md {
+    font-size: clamp(1.24rem, 6.2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .ui-body {
+    font-size: 0.95rem;
+    line-height: 1.58;
+  }
+
+  .ui-btn-primary,
+  .ui-btn-secondary {
+    min-height: 2.9rem;
+    padding: 0.68rem 1.12rem;
+    font-size: 0.94rem;
+  }
+
+  .ui-btn-xs {
+    min-height: 2.7rem;
+    padding: 0.56rem 0.96rem;
+    font-size: 0.86rem;
+  }
+
+  .ui-btn-lg {
+    min-height: 3.05rem;
+    padding: 0.75rem 1.3rem;
+    font-size: 1rem;
+  }
+
+  .ui-icon-box {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .ui-icon-box-lg {
+    width: 2.85rem;
+    height: 2.85rem;
+  }
+}
+
 .home-fade-up {
-  animation: home-fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: home-fade-up 0.34s ease-out both;
+}
+
+.home-auth-signed-in .home-search-tool,
+.home-auth-loading .home-search-tool {
+  min-height: 40rem;
+}
+
+@media (min-width: 640px) {
+  .home-auth-signed-in .home-search-tool,
+  .home-auth-loading .home-search-tool {
+    min-height: 45rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-auth-signed-in .home-search-tool,
+  .home-auth-loading .home-search-tool {
+    min-height: 48rem;
+  }
 }
 
 .home-orb {
-  animation: home-orb-drift 10s ease-in-out infinite;
+  animation: none;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .home-orb {
+    animation: home-orb-drift 14s ease-in-out infinite;
+  }
 }
 
 .home-title-accent {
