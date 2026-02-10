@@ -3,7 +3,8 @@ import { ArrowRight, Check, Globe, ImageUp, Search, Shield, Sparkles } from 'luc
 import { setRequestLocale } from 'next-intl/server';
 import Link from '@/components/AppLink';
 import { routing } from '@/libs/I18nRouting';
-import { HomeAuthLoadingOnly, HomeBottomCta, HomeHeroCtas, HomeSignedInOnly, HomeSignedOutBanner, HomeSignedOutOnly, HomeUseCasesSignedOutCta } from './HomeAuth';
+import { getI18nPath } from '@/utils/Helpers';
+import { HomeAuthGate } from './HomeAuthGate';
 import { SearchClient } from './search/SearchClient';
 
 type IIndexProps = {
@@ -12,11 +13,31 @@ type IIndexProps = {
 
 export const dynamic = 'force-static';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const canonicalPath = getI18nPath('/', locale);
+  const title = 'Reverse Image Search to Find Similar Photos Online';
+  const description = 'Search by image to find visually similar photos, source pages, and higher-resolution versions. Upload a file, paste a URL, or drag and drop to start.';
+
   return {
-    title: 'Reverse Image Search - Search by Image to Find Similar Photos',
-    description:
-      'Use our fast reverse image search tool to find similar images, identify sources, and explore high-resolution versions. Support upload, URL, and drag-and-drop. Try ReverseImage.io for free.',
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalPath,
+      type: 'website',
+      images: ['/android-chrome-512x512.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/android-chrome-512x512.png'],
+    },
     keywords: [
       'reverse image search',
       'search by image',
@@ -110,7 +131,7 @@ export default async function Index(props: IIndexProps) {
   };
 
   const searchToolSection = (
-    <section className="home-fade-up home-search-tool w-full min-w-0 overflow-hidden rounded-[2.2rem] bg-white/82 p-4 shadow-[0_24px_52px_-42px_rgba(15,23,42,0.6)] backdrop-blur-sm sm:p-8">
+    <section className="home-fade-up home-search-tool overflow-hidden rounded-[2.2rem] bg-white/82 p-4 shadow-[0_24px_52px_-42px_rgba(15,23,42,0.6)] sm:p-8">
       <div className="mb-4 flex min-w-0 flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div>
           <p className="text-xs font-semibold tracking-[0.18em] text-[var(--home-accent)] uppercase">Search Tool</p>
@@ -124,55 +145,25 @@ export default async function Index(props: IIndexProps) {
           Upload file, drag-and-drop, or image URL
         </p>
       </div>
-      <SearchClient />
+      <div className="space-y-6">
+        <SearchClient />
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={`${prefix}/pricing`} className="ui-btn-secondary">
+            View pricing
+          </Link>
+        </div>
+      </div>
     </section>
   );
 
-  const authLoadingFallback = (
-    <div className="home-auth-loading space-y-6 pb-8 font-[var(--home-font)] sm:space-y-8 sm:pb-12">
-      <section className="home-search-tool overflow-hidden rounded-[2.2rem] bg-white/82 p-4 shadow-[0_24px_52px_-42px_rgba(15,23,42,0.6)] sm:p-8">
-        <div className="animate-pulse space-y-6">
-          <div className="space-y-3">
-            <div className="h-3 w-24 rounded-full bg-slate-200" />
-            <div className="h-8 w-3/5 rounded-lg bg-slate-200 sm:h-10" />
-          </div>
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div className="space-y-4 rounded-3xl bg-white p-5">
-              <div className="h-4 w-28 rounded-full bg-slate-200" />
-              <div className="h-60 rounded-2xl bg-slate-100 sm:h-72" />
-              <div className="h-10 w-full rounded-xl bg-slate-100" />
-            </div>
-            <div className="space-y-4 rounded-3xl bg-white p-5">
-              <div className="h-4 w-32 rounded-full bg-slate-200" />
-              <div className="h-20 rounded-xl bg-slate-100" />
-              <div className="h-20 rounded-xl bg-slate-100" />
-              <div className="h-20 rounded-xl bg-slate-100" />
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-
   return (
-    <>
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <HomeAuthLoadingOnly>
-        {authLoadingFallback}
-      </HomeAuthLoadingOnly>
-
-      <HomeSignedInOnly>
-        <div className="home-auth-signed-in space-y-6 pb-8 font-[var(--home-font)] sm:space-y-8 sm:pb-12">
-          {searchToolSection}
-        </div>
-      </HomeSignedInOnly>
-
-      <HomeSignedOutOnly>
+    <HomeAuthGate>
+      <>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
         <div className="home-shell space-y-14 pb-10 font-[var(--home-font)] sm:space-y-20 sm:pb-12">
           <section className="home-fade-up relative overflow-hidden rounded-[2.5rem] border border-[var(--home-line)] bg-[var(--home-paper)] px-5 py-9 shadow-[0_35px_90px_-55px_rgba(29,29,31,0.55)] sm:px-10 sm:py-12 lg:px-14 lg:py-16">
             <div className="home-orb pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(0,113,227,0.22)_0%,rgba(0,113,227,0)_72%)]" />
@@ -190,12 +181,27 @@ export default async function Index(props: IIndexProps) {
                 <p className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
                   Search across 50+ stock sites. Find higher resolution versions. Identify sources instantly.
                 </p>
-                <HomeSignedOutBanner />
+                <div className="ui-panel border-sky-200/80 bg-white/80 p-4 backdrop-blur sm:p-5">
+                  <p className="text-base font-semibold text-slate-900">
+                    <Sparkles className="mb-1 inline h-5 w-5 text-sky-600" />
+                    {' '}
+                    Get 3 Free Searches - No Credit Card Required
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                    Try our reverse image search for free. Find similar images, track sources, and discover higher resolution versions across the web.
+                  </p>
+                </div>
                 <p className="max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
                   Upload a photo, drag-and-drop a file, or paste a public image URL. We search the web for visually similar matches, surface thumbnails and source links, and help you track where images appear online.
                 </p>
                 <div className="flex flex-wrap items-center gap-3">
-                  <HomeHeroCtas prefix={prefix} />
+                  <Link href={`${prefix}/sign-up`} className="ui-btn-primary">
+                    Try free (3 credits)
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link href={`${prefix}/pricing`} className="ui-btn-secondary">
+                    View pricing
+                  </Link>
                 </div>
                 <div className="grid max-w-2xl gap-3 text-sm sm:grid-cols-2">
                   {heroHighlights.map(highlight => (
@@ -370,7 +376,13 @@ export default async function Index(props: IIndexProps) {
                   View pricing
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <HomeUseCasesSignedOutCta prefix={prefix} />
+                <Link
+                  href={`${prefix}/sign-up`}
+                  className="ui-btn-primary"
+                >
+                  Get started
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </section>
@@ -450,11 +462,20 @@ export default async function Index(props: IIndexProps) {
               <p className="mt-3 text-base text-slate-300 sm:mt-4 sm:text-lg">
                 Join thousands of photographers, designers, and content creators using ReverseImage.io to track image usage and find higher quality versions.
               </p>
-              <HomeBottomCta prefix={prefix} />
+              <Link
+                href={`${prefix}/sign-up`}
+                className="ui-btn-primary ui-btn-lg mt-8"
+              >
+                Get Started with 3 Free Credits
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <p className="mt-4 text-sm text-slate-400">
+                No credit card required · Start searching in seconds
+              </p>
             </div>
           </section>
         </div>
-      </HomeSignedOutOnly>
-    </>
+      </>
+    </HomeAuthGate>
   );
 }

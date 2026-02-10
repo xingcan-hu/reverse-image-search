@@ -1,13 +1,11 @@
+import type { SignUp } from '@clerk/nextjs';
 import type { Metadata } from 'next';
-import { SignUp } from '@clerk/nextjs';
-import { setRequestLocale } from 'next-intl/server';
-import { getI18nPath } from '@/utils/Helpers';
+import type { ComponentProps } from 'react';
+import { AuthClerkCard } from '../../AuthClerkCard';
 
-type ISignUpPageProps = {
-  params: Promise<{ locale: string }>;
-};
+export const dynamic = 'force-static';
 
-const signUpAppearance = {
+const signUpAppearance: ComponentProps<typeof SignUp>['appearance'] = {
   elements: {
     rootBox: 'w-full',
     card: 'w-full rounded-3xl border border-slate-200 bg-white shadow-none',
@@ -34,13 +32,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function SignUpPage(props: ISignUpPageProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-
+export default function SignUpCatchAllPage() {
   return (
     <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-      <section className="ui-panel-hero hidden bg-[var(--ui-soft)]/65 p-10 lg:block">
+      <section className="ui-panel-hero auth-hero-reveal hidden bg-[var(--ui-soft)]/65 p-10 lg:block">
         <p className="ui-kicker">Get Started</p>
         <h1 className="ui-heading-lg mt-4">
           Create your account and get
@@ -52,9 +47,9 @@ export default async function SignUpPage(props: ISignUpPageProps) {
         </p>
       </section>
 
-      <section className="ui-panel ui-panel-lg min-w-0 bg-white/90 p-3 sm:p-6">
-        <SignUp path={getI18nPath('/sign-up', locale)} appearance={signUpAppearance} />
+      <section className="ui-panel ui-panel-lg auth-panel-reveal min-w-0 bg-white/90 p-3 sm:p-6">
+        <AuthClerkCard mode="sign-up" appearance={signUpAppearance} />
       </section>
     </div>
   );
-};
+}

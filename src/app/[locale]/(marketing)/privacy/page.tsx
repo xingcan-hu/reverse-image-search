@@ -1,15 +1,39 @@
 import type { Metadata } from 'next';
 import { Clock, CreditCard, Database, Eye, ImageIcon, Lock, Shield } from 'lucide-react';
 import { setRequestLocale } from 'next-intl/server';
+import { getI18nPath } from '@/utils/Helpers';
 
 type PrivacyPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Vibe Search',
-  description: 'How Vibe Search handles uploaded images, personal data, and payment information.',
-};
+export async function generateMetadata(props: PrivacyPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const canonicalPath = getI18nPath('/privacy', locale);
+  const title = 'Privacy Policy for Reverse Image Search | ReverseImage.io';
+  const description = 'Learn what ReverseImage.io stores, how uploaded images are processed, and how account and payment information is protected with secure providers.';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalPath,
+      type: 'website',
+      images: ['/android-chrome-512x512.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/android-chrome-512x512.png'],
+    },
+  };
+}
 
 const sections = [
   {

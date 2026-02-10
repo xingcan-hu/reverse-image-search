@@ -9,9 +9,39 @@ import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { routing } from '@/libs/I18nRouting';
 import { ClerkLocalizations } from '@/utils/AppConfig';
+import { getBaseUrl } from '@/utils/Helpers';
 import '@/styles/global.css';
 
+const siteUrl = getBaseUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  applicationName: 'ReverseImage.io',
+  title: {
+    default: 'ReverseImage.io',
+    template: '%s',
+  },
+  description: 'ReverseImage.io lets you search by image to find similar photos, source pages, and higher-resolution versions across web and stock sites in seconds.',
+  openGraph: {
+    type: 'website',
+    siteName: 'ReverseImage.io',
+    title: 'ReverseImage.io',
+    description: 'ReverseImage.io lets you search by image to find similar photos, source pages, and higher-resolution versions across web and stock sites in seconds.',
+    images: [
+      {
+        url: '/android-chrome-512x512.png',
+        width: 512,
+        height: 512,
+        alt: 'ReverseImage.io',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ReverseImage.io',
+    description: 'ReverseImage.io lets you search by image to find similar photos, source pages, and higher-resolution versions across web and stock sites in seconds.',
+    images: ['/android-chrome-512x512.png'],
+  },
   icons: [
     {
       rel: 'apple-touch-icon',

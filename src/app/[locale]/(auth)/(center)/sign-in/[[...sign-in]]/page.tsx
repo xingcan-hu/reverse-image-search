@@ -1,13 +1,11 @@
+import type { SignIn } from '@clerk/nextjs';
 import type { Metadata } from 'next';
-import { SignIn } from '@clerk/nextjs';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { getI18nPath } from '@/utils/Helpers';
+import type { ComponentProps } from 'react';
+import { AuthClerkCard } from '../../AuthClerkCard';
 
-type ISignInPageProps = {
-  params: Promise<{ locale: string }>;
-};
+export const dynamic = 'force-static';
 
-const signInAppearance = {
+const signInAppearance: ComponentProps<typeof SignIn>['appearance'] = {
   elements: {
     rootBox: 'w-full',
     card: 'w-full rounded-3xl border border-slate-200 bg-white shadow-none',
@@ -25,26 +23,19 @@ const signInAppearance = {
   },
 };
 
-export async function generateMetadata(props: ISignInPageProps): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({
-    locale,
-    namespace: 'SignIn',
-  });
+export const metadata: Metadata = {
+  title: 'Sign in',
+  description: 'Access your ReverseImage.io account and credits.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
-  return {
-    title: t('meta_title'),
-    description: t('meta_description'),
-  };
-}
-
-export default async function SignInPage(props: ISignInPageProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-
+export default function SignInPage() {
   return (
     <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-      <section className="ui-panel-hero hidden bg-[var(--ui-soft)]/65 p-10 lg:block">
+      <section className="ui-panel-hero auth-hero-reveal hidden bg-[var(--ui-soft)]/65 p-10 lg:block">
         <p className="ui-kicker">Welcome Back</p>
         <h1 className="ui-heading-lg mt-4">
           Sign in and continue
@@ -56,9 +47,9 @@ export default async function SignInPage(props: ISignInPageProps) {
         </p>
       </section>
 
-      <section className="ui-panel ui-panel-lg min-w-0 bg-white/90 p-3 sm:p-6">
-        <SignIn path={getI18nPath('/sign-in', locale)} appearance={signInAppearance} />
+      <section className="ui-panel ui-panel-lg auth-panel-reveal min-w-0 bg-white/90 p-3 sm:p-6">
+        <AuthClerkCard mode="sign-in" appearance={signInAppearance} />
       </section>
     </div>
   );
-};
+}

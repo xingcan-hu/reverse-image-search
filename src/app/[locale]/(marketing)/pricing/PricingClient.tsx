@@ -1,73 +1,23 @@
-'use client';
-
 import type { CreditPackage } from '@/libs/Billing';
-import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
-import { ArrowRight, Check, Crown, Gift, Loader2, Shield, Sparkles, Zap } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { ArrowRight, Check, Crown, Gift, Shield, Sparkles, Zap } from 'lucide-react';
 import Link from '@/components/AppLink';
-import { useCredits } from '@/components/credits/CreditsProvider';
 import { routing } from '@/libs/I18nRouting';
 import { cn } from '@/utils/Cn';
+import { PricingCheckoutButton } from './PricingCheckoutButton';
 
 type PricingClientProps = {
   packages: CreditPackage[];
+  locale: string;
 };
 
-export const PricingClient = ({ packages }: PricingClientProps) => {
-  const router = useRouter();
-  const { isSignedIn } = useAuth();
-  const locale = useLocale();
+export const PricingClient = ({ packages, locale }: PricingClientProps) => {
   const apiPrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
   const localePrefix = apiPrefix || '';
   const refundsHref = `${localePrefix}/refunds`;
-  const { credits } = useCredits();
-  const [loadingId, setLoadingId] = useState<string | null>(null);
-
-  const handleCheckout = async (packageId: string) => {
-    if (!isSignedIn) {
-      router.push(`${localePrefix}/sign-in`);
-      return;
-    }
-
-    setLoadingId(packageId);
-
-    try {
-      const response = await fetch(`${apiPrefix}/api/billing/checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ packageId }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        toast.error('Unable to start checkout', { description: error.error ?? 'Try again.' });
-        setLoadingId(null);
-        return;
-      }
-
-      const payload = await response.json();
-
-      if (payload.url) {
-        window.location.href = payload.url;
-        return;
-      }
-
-      toast.error('Checkout link missing. Please retry.');
-    } catch {
-      toast.error('Unable to start checkout', { description: 'Please retry in a moment.' });
-    } finally {
-      setLoadingId(null);
-    }
-  };
+  const signInHref = `${localePrefix}/sign-in`;
 
   return (
     <div className="ui-page">
-      {/* Hero Section */}
       <div className="ui-panel-hero relative overflow-hidden bg-gradient-to-br from-[#1d1d1f] via-[#262629] to-[#1f2937] p-6 shadow-[0_30px_55px_-45px_rgba(29,29,31,0.95)] sm:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(0,113,227,0.18),transparent_52%)]" />
         <div className="relative">
@@ -83,20 +33,13 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
           <p className="mt-2 text-base text-slate-300 sm:mt-3 sm:text-lg">
             No subscriptions. No hidden fees. Buy credits when you need them.
           </p>
-          <SignedIn>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--ui-accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg sm:mt-6 sm:px-5 sm:py-3 sm:text-base">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
-              Your Balance:
-              {' '}
-              {credits ?? 0}
-              {' '}
-              Credits
-            </div>
-          </SignedIn>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--ui-accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg sm:mt-6 sm:px-5 sm:py-3 sm:text-base">
+            <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
+            3 free credits after signup
+          </div>
         </div>
       </div>
 
-      {/* Pricing Cards */}
       <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {packages.map(pkg => (
           <div
@@ -164,37 +107,16 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleCheckout(pkg.id)}
-              disabled={loadingId === pkg.id}
-              className={cn(
-                'ui-btn-lg relative mt-4 w-full sm:mt-6',
-                pkg.highlight
-                  ? 'ui-btn-primary'
-                  : 'ui-btn-secondary border-2',
-                loadingId === pkg.id && 'cursor-not-allowed opacity-60',
-              )}
-            >
-              {loadingId === pkg.id
-                ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
-                      Processing...
-                    </>
-                  )
-                : (
-                    <>
-                      Buy Now
-                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </>
-                  )}
-            </button>
+            <PricingCheckoutButton
+              packageId={pkg.id}
+              apiPrefix={apiPrefix}
+              signInHref={signInHref}
+              highlight={Boolean(pkg.highlight)}
+            />
           </div>
         ))}
       </div>
 
-      {/* Features Grid */}
       <div className="ui-panel-soft grid gap-4 p-6 sm:gap-6 sm:p-8 md:grid-cols-3">
         <div className="flex flex-col items-center gap-2 text-center sm:gap-3">
           <div className="ui-icon-box ui-icon-box-lg">
@@ -225,7 +147,6 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
         </div>
       </div>
 
-      {/* Refund Policy Summary */}
       <div className="ui-panel p-6 sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
           <div className="ui-icon-box ui-icon-box-sm shrink-0">
@@ -259,26 +180,25 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
         </div>
       </div>
 
-      {/* CTA for non-signed-in users */}
-      <SignedOut>
-        <div className="ui-panel-soft relative overflow-hidden p-6 sm:p-8">
-          <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-gradient-to-br from-sky-300 to-blue-400 opacity-20 blur-3xl" />
-          <div className="relative flex flex-col items-center gap-4 text-center sm:gap-6">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ui-accent)] px-3 py-1.5 text-xs font-bold text-white shadow-lg sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
-              <Gift className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              Free Trial
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-[var(--ui-ink)] sm:text-3xl">Try Before You Buy</h3>
-              <p className="mt-2 text-base text-[var(--ui-muted)] sm:text-lg">
-                Sign up now and get
-                {' '}
-                <span className="font-bold text-[var(--ui-accent)]">3 free search credits</span>
-                {' '}
-                to test the quality
-              </p>
-              <p className="mt-2 text-xs text-[var(--ui-muted)] sm:text-sm">No credit card required · Credits never expire</p>
-            </div>
+      <div className="ui-panel-soft relative overflow-hidden p-6 sm:p-8">
+        <div className="absolute top-0 right-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-gradient-to-br from-sky-300 to-blue-400 opacity-20 blur-3xl" />
+        <div className="relative flex flex-col items-center gap-4 text-center sm:gap-6">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ui-accent)] px-3 py-1.5 text-xs font-bold text-white shadow-lg sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+            <Gift className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            Free Trial
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-[var(--ui-ink)] sm:text-3xl">Try Before You Buy</h3>
+            <p className="mt-2 text-base text-[var(--ui-muted)] sm:text-lg">
+              Sign up now and get
+              {' '}
+              <span className="font-bold text-[var(--ui-accent)]">3 free search credits</span>
+              {' '}
+              to test the quality
+            </p>
+            <p className="mt-2 text-xs text-[var(--ui-muted)] sm:text-sm">No credit card required · Credits never expire</p>
+          </div>
+          <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
             <Link
               href={`${localePrefix}/sign-up`}
               className="ui-btn-primary ui-btn-lg w-full sm:w-auto"
@@ -286,9 +206,15 @@ export const PricingClient = ({ packages }: PricingClientProps) => {
               Get Started Free
               <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
+            <Link
+              href={signInHref}
+              className="ui-btn-secondary ui-btn-lg w-full sm:w-auto"
+            >
+              Sign in
+            </Link>
           </div>
         </div>
-      </SignedOut>
+      </div>
     </div>
   );
 };

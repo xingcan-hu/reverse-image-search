@@ -315,10 +315,10 @@ export const SearchClient = () => {
           </div>
 
           <div className="min-w-0 rounded-3xl bg-gradient-to-b from-white to-slate-50 p-4 shadow-[0_16px_35px_-28px_rgba(15,23,42,0.38)] sm:p-5">
-            <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
+            <h3 className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-600 uppercase">
               <Search className="h-3.5 w-3.5" />
               Search preview
-            </p>
+            </h3>
             <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 sm:h-44">
               <div className="text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white">

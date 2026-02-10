@@ -96,7 +96,7 @@ configWithPlugins.rewrites = async () => {
     beforeFiles: [
       { source: '/', destination: `/${DEFAULT_LOCALE}` },
       {
-        source: `/:path((?!${DEFAULT_LOCALE}(?:/|$)|_next|_vercel|monitoring|api/webhooks?(?:/|$)|.*\\\\..*).*)`,
+        source: `/:path((?!${DEFAULT_LOCALE}(?:/|$)|_next|_vercel|monitoring|api/webhooks?(?:/|$)|robots\\.txt|sitemap\\.xml|.*\\..*).*)`,
         destination: `/${DEFAULT_LOCALE}/:path`,
       },
       ...normalized.beforeFiles,
@@ -104,6 +104,27 @@ configWithPlugins.rewrites = async () => {
     afterFiles: normalized.afterFiles,
     fallback: normalized.fallback,
   };
+};
+
+const existingRedirects = configWithPlugins.redirects;
+configWithPlugins.redirects = async () => {
+  const prior = typeof existingRedirects === 'function'
+    ? await existingRedirects()
+    : existingRedirects;
+
+  return [
+    {
+      source: `/${DEFAULT_LOCALE}/robots.txt`,
+      destination: '/robots.txt',
+      permanent: true,
+    },
+    {
+      source: `/${DEFAULT_LOCALE}/sitemap.xml`,
+      destination: '/sitemap.xml',
+      permanent: true,
+    },
+    ...(prior ?? []),
+  ];
 };
 
 const nextConfig = configWithPlugins;

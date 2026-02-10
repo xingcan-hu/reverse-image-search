@@ -4,15 +4,39 @@ import { setRequestLocale } from 'next-intl/server';
 import Link from '@/components/AppLink';
 import { RefundPolicy } from '@/components/legal/RefundPolicy';
 import { routing } from '@/libs/I18nRouting';
+import { getI18nPath } from '@/utils/Helpers';
 
 type TermsPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | Vibe Search',
-  description: 'Terms of Service and Refund Policy for Vibe Search including credits, payments, and refund eligibility.',
-};
+export async function generateMetadata(props: TermsPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const canonicalPath = getI18nPath('/terms', locale);
+  const title = 'Terms of Service for Reverse Image Search | ReverseImage.io';
+  const description = 'Read the terms for using ReverseImage.io, including account rules, credit usage, one-time Stripe payments, acceptable use requirements, and refund eligibility.';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalPath,
+      type: 'website',
+      images: ['/android-chrome-512x512.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/android-chrome-512x512.png'],
+    },
+  };
+}
 
 const terms = [
   {

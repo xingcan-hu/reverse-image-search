@@ -4,15 +4,39 @@ import { setRequestLocale } from 'next-intl/server';
 import Link from '@/components/AppLink';
 import { RefundPolicy } from '@/components/legal/RefundPolicy';
 import { routing } from '@/libs/I18nRouting';
+import { getI18nPath } from '@/utils/Helpers';
 
 type RefundsPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export const metadata: Metadata = {
-  title: 'Refund Policy - ReverseImage.io',
-  description: 'Refund and cancellation policy for digital credits and one-time payments on ReverseImage.io.',
-};
+export async function generateMetadata(props: RefundsPageProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const canonicalPath = getI18nPath('/refunds', locale);
+  const title = 'Refund Policy for Reverse Image Credits | ReverseImage.io';
+  const description = 'Review refund terms for ReverseImage.io credit packs, including 14-day unused-pack refunds, automatic credit returns on failed searches, and support timelines.';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalPath,
+      type: 'website',
+      images: ['/android-chrome-512x512.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/android-chrome-512x512.png'],
+    },
+  };
+}
 
 export default async function RefundsPage(props: RefundsPageProps) {
   const { locale } = await props.params;

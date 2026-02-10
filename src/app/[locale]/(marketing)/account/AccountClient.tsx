@@ -3,13 +3,14 @@
 import { UserButton } from '@clerk/nextjs';
 import { Copy, Gift, LogOut, Receipt, Share2, Wallet } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import Link from '@/components/AppLink';
 import { useCredits } from '@/components/credits/CreditsProvider';
 import { routing } from '@/libs/I18nRouting';
 
-type Transaction = {
+export type Transaction = {
   id: string;
   amount: number;
   currency: string;
@@ -19,15 +20,30 @@ type Transaction = {
   createdAt: string | null;
 };
 
-type InviteStats = {
+export type InviteStats = {
   invitedUsers: number;
   creditsEarned: number;
 };
 
-type InviteRecent = {
+export type InviteRecent = {
   inviteeUserId: string;
   inviteeEmailMasked: string | null;
   createdAt: string | null;
+};
+
+type AccountClientProps = {
+  initialCredits?: number;
+  initialTransactions?: Transaction[];
+  initialCheckedInToday?: boolean;
+  initialNextResetAt?: string | null;
+  initialInviteUrl?: string;
+  initialInviteStats?: InviteStats;
+  initialInviteRecent?: InviteRecent[];
+};
+
+const EMPTY_INVITE_STATS: InviteStats = {
+  invitedUsers: 0,
+  creditsEarned: 0,
 };
 
 const formatCurrency = (amount: number, currency: string) => {
@@ -38,50 +54,90 @@ const formatCurrency = (amount: number, currency: string) => {
   }).format(amount / 100);
 };
 
-export const AccountClient = () => {
-  const { credits, refreshCredits } = useCredits();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+const toFiniteNumber = (value: unknown, fallback = 0) => {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const normalizeTransactions = (value: unknown): Transaction[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => {
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const record = item as Record<string, unknown>;
+      if (typeof record.id !== 'string') {
+        return null;
+      }
+
+      return {
+        id: record.id,
+        amount: toFiniteNumber(record.amount),
+        currency: typeof record.currency === 'string' ? record.currency : 'usd',
+        creditsAdded: toFiniteNumber(record.creditsAdded),
+        stripeSessionId: typeof record.stripeSessionId === 'string' ? record.stripeSessionId : '',
+        status: typeof record.status === 'string' ? record.status : 'unknown',
+        createdAt: typeof record.createdAt === 'string' ? record.createdAt : null,
+      };
+    })
+    .filter((item): item is Transaction => item !== null);
+};
+
+const normalizeInviteRecent = (value: unknown): InviteRecent[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item, index) => {
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const record = item as Record<string, unknown>;
+      const inviteeUserId = typeof record.inviteeUserId === 'string' ? record.inviteeUserId : `invitee-${index}`;
+
+      return {
+        inviteeUserId,
+        inviteeEmailMasked: typeof record.inviteeEmailMasked === 'string' ? record.inviteeEmailMasked : null,
+        createdAt: typeof record.createdAt === 'string' ? record.createdAt : null,
+      };
+    })
+    .filter((item): item is InviteRecent => item !== null);
+};
+
+export const AccountClient = ({
+  initialCredits = 0,
+  initialTransactions = [],
+  initialCheckedInToday = false,
+  initialNextResetAt = null,
+  initialInviteUrl = '',
+  initialInviteStats = EMPTY_INVITE_STATS,
+  initialInviteRecent = [],
+}: AccountClientProps = {}) => {
+  const { credits, refreshCredits, setCredits } = useCredits();
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [loading, setLoading] = useState(true);
-  const [checkinLoading, setCheckinLoading] = useState(true);
-  const [checkedInToday, setCheckedInToday] = useState(false);
+  const [checkinLoading, setCheckinLoading] = useState(false);
+  const [checkedInToday, setCheckedInToday] = useState(initialCheckedInToday);
   const [checkinSuccess, setCheckinSuccess] = useState(false);
-  const [nextResetAt, setNextResetAt] = useState<string | null>(null);
+  const [nextResetAt, setNextResetAt] = useState<string | null>(initialNextResetAt);
   const [inviteLoading, setInviteLoading] = useState(true);
-  const [inviteUrl, setInviteUrl] = useState('');
-  const [inviteStats, setInviteStats] = useState<InviteStats>({
-    invitedUsers: 0,
-    creditsEarned: 0,
-  });
-  const [inviteRecent, setInviteRecent] = useState<InviteRecent[]>([]);
+  const [inviteUrl, setInviteUrl] = useState(initialInviteUrl);
+  const [inviteStats, setInviteStats] = useState<InviteStats>(initialInviteStats);
+  const [inviteRecent, setInviteRecent] = useState<InviteRecent[]>(initialInviteRecent);
   const locale = useLocale();
+  const router = useRouter();
   const apiPrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
   const localePrefix = apiPrefix || '';
   const checkinTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const loadTransactions = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${apiPrefix}/api/users/transactions`);
-
-        if (!response.ok) {
-          toast.error('Unable to load transactions');
-          setLoading(false);
-          return;
-        }
-
-        const data = await response.json();
-        setTransactions(data.transactions ?? []);
-      } catch {
-        toast.error('Unable to load transactions');
-      } finally {
-        setLoading(false);
-        await refreshCredits();
-      }
-    };
-
-    void loadTransactions();
-  }, [apiPrefix, refreshCredits]);
+  const didLoadDataRef = useRef(false);
+  const availableCredits = typeof credits === 'number' ? credits : loading ? null : initialCredits;
 
   useEffect(() => {
     return () => {
@@ -91,53 +147,114 @@ export const AccountClient = () => {
     };
   }, []);
 
+  const applyInvitePayload = useCallback((payload: unknown) => {
+    if (!payload || typeof payload !== 'object') {
+      return;
+    }
+
+    const record = payload as Record<string, unknown>;
+    const stats = record.stats && typeof record.stats === 'object'
+      ? (record.stats as Record<string, unknown>)
+      : null;
+
+    setInviteUrl(typeof record.inviteUrl === 'string' ? record.inviteUrl : '');
+    setInviteStats({
+      invitedUsers: toFiniteNumber(stats?.invitedUsers),
+      creditsEarned: toFiniteNumber(stats?.creditsEarned),
+    });
+    setInviteRecent(normalizeInviteRecent(record.recent));
+  }, []);
+
   useEffect(() => {
-    const loadRewards = async () => {
-      setCheckinLoading(true);
+    if (didLoadDataRef.current) {
+      return;
+    }
+
+    didLoadDataRef.current = true;
+    let cancelled = false;
+
+    const loadAccountData = async () => {
+      setLoading(true);
       setInviteLoading(true);
 
       try {
-        const [checkinResponse, inviteResponse] = await Promise.all([
-          fetch(`${apiPrefix}/api/rewards/checkin/status`),
-          fetch(`${apiPrefix}/api/rewards/invite`),
+        const [meResponse, txResponse, checkinResponse, inviteResponse] = await Promise.all([
+          fetch(`${apiPrefix}/api/users/me`, { method: 'GET' }),
+          fetch(`${apiPrefix}/api/users/transactions`, { method: 'GET' }),
+          fetch(`${apiPrefix}/api/rewards/checkin/status`, { method: 'GET' }),
+          fetch(`${apiPrefix}/api/rewards/invite`, { method: 'GET' }),
         ]);
 
-        if (checkinResponse.ok) {
-          const data = await checkinResponse.json();
-          setCheckedInToday(Boolean(data.checkedInToday));
-          setNextResetAt(typeof data.nextResetAt === 'string' ? data.nextResetAt : null);
-        } else {
-          toast.error('Unable to load check-in status');
+        if (cancelled) {
+          return;
         }
 
-        if (inviteResponse.ok) {
-          const data = await inviteResponse.json();
-          setInviteUrl(data.inviteUrl ?? '');
-          setInviteStats({
-            invitedUsers: data.stats?.invitedUsers ?? 0,
-            creditsEarned: data.stats?.creditsEarned ?? 0,
-          });
-          setInviteRecent(data.recent ?? []);
-        } else {
-          toast.error('Unable to load invite details');
+        if (
+          meResponse.status === 401
+          || txResponse.status === 401
+          || checkinResponse.status === 401
+          || inviteResponse.status === 401
+        ) {
+          router.replace(`${apiPrefix}/sign-in`);
+          return;
         }
+
+        if (!meResponse.ok || !txResponse.ok || !checkinResponse.ok || !inviteResponse.ok) {
+          toast.error('Unable to load account data');
+          return;
+        }
+
+        const [meData, txData, checkinData, inviteData] = await Promise.all([
+          meResponse.json(),
+          txResponse.json(),
+          checkinResponse.json(),
+          inviteResponse.json(),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        if (typeof meData?.credits === 'number') {
+          setCredits(meData.credits);
+        }
+
+        setTransactions(normalizeTransactions(txData?.transactions));
+        setCheckedInToday(Boolean(checkinData?.checkedInToday));
+        setNextResetAt(typeof checkinData?.nextResetAt === 'string' ? checkinData.nextResetAt : null);
+        applyInvitePayload(inviteData);
       } catch {
-        toast.error('Unable to load rewards');
+        if (!cancelled) {
+          toast.error('Unable to load account data');
+        }
       } finally {
-        setCheckinLoading(false);
-        setInviteLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setInviteLoading(false);
+        }
       }
     };
 
-    void loadRewards();
-  }, [apiPrefix]);
+    void loadAccountData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiPrefix, applyInvitePayload, router, setCredits]);
 
   useEffect(() => {
     const claimReferral = async () => {
+      let shouldRefreshInvite = false;
+
       try {
         const response = await fetch(`${apiPrefix}/api/rewards/referrals/claim`, {
           method: 'POST',
         });
+
+        if (response.status === 401) {
+          router.replace(`${apiPrefix}/sign-in`);
+          return;
+        }
 
         if (!response.ok) {
           return;
@@ -146,17 +263,36 @@ export const AccountClient = () => {
         const data = await response.json();
 
         if (data?.claimed) {
+          shouldRefreshInvite = true;
           toast.success('Invite applied. Your friend has been rewarded.');
         }
       } catch {
         // Ignore referral claim failures.
       } finally {
+        if (shouldRefreshInvite) {
+          try {
+            setInviteLoading(true);
+            const inviteResponse = await fetch(`${apiPrefix}/api/rewards/invite`, {
+              method: 'GET',
+            });
+
+            if (inviteResponse.ok) {
+              const inviteData = await inviteResponse.json();
+              applyInvitePayload(inviteData);
+            }
+          } catch {
+            // Ignore invite refresh failures.
+          } finally {
+            setInviteLoading(false);
+          }
+        }
+
         await refreshCredits();
       }
     };
 
     void claimReferral();
-  }, [apiPrefix, refreshCredits]);
+  }, [apiPrefix, applyInvitePayload, refreshCredits, router]);
 
   const createdAtFormatter = useMemo(() => new Intl.DateTimeFormat('en', {
     year: 'numeric',
@@ -182,6 +318,11 @@ export const AccountClient = () => {
       const response = await fetch(`${apiPrefix}/api/rewards/checkin`, {
         method: 'POST',
       });
+
+      if (response.status === 401) {
+        router.replace(`${apiPrefix}/sign-in`);
+        return;
+      }
 
       const data = await response.json().catch(() => ({}));
 
@@ -227,7 +368,7 @@ export const AccountClient = () => {
         <div className="ui-panel min-w-0 p-6">
           <p className="text-xs font-semibold text-[var(--ui-accent)] uppercase">Credits</p>
           <div className="mt-2 flex items-end gap-3">
-            <p className="text-5xl font-bold text-[var(--ui-ink)]">{credits ?? 0}</p>
+            <p className="text-5xl font-bold text-[var(--ui-ink)]">{availableCredits ?? '—'}</p>
             <span className="text-sm font-semibold text-[var(--ui-muted)]">available</span>
           </div>
           <p className="mt-2 text-sm text-[var(--ui-muted)]">Use 1 credit per search. Credits never expire.</p>
